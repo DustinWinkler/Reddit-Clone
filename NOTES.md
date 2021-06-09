@@ -1,7 +1,5 @@
 * = maybe
 
-My name is chef 
-
 # Users
   ## features
     login/signup
