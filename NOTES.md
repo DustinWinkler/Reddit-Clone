@@ -6,7 +6,7 @@
     profile pic
     make posts
     up/downvote stuff, keep track of upvotes, cant allow infinite voting
-    * following other users
+    * following other users or following subs 
     * if subreddits, follow subs
 
 
@@ -21,6 +21,7 @@
     content - must have text body, optional image
     comments
     votes
+    ! Definitely want r/all to be able to sort by top and new
 
   ## functions
 
@@ -34,3 +35,8 @@
   ## functions
 
 
+# Subreddits
+  ## features
+    groups post
+    can go to an individual sub to see only posts from there
+    

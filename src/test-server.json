@@ -1,0 +1,24 @@
+{
+  "posts": [
+    {
+      "id": 1,
+      "author": "Jimmy",
+      "title": "My name is chef",
+      "content": "I just legally changed my name to Chef everbody! Can I get a woot woot?",
+      "upvotes": 0,
+      "downvotes": 0,
+      "subreddit": "books"
+    }
+  ],
+  "users": {
+    "1":{
+      "username": "Jimmy",
+      "password": "123"
+    }
+  },
+  "subreddits": [
+    "books",
+    "memes",
+    "cooking"
+  ]
+}
