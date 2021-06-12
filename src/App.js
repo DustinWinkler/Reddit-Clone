@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
+import Comments from './components/Comments';
 import Header from './components/Header'
 import Posts  from "./components/Posts";
 import Subreddits from './components/Subreddits';
@@ -32,9 +33,9 @@ function App() {
         <Subreddits />
       </Route>
 
-      <Switch>
-
-      </Switch>
+      <Route path="/:subreddit/comments/:postid">
+        <Comments />
+      </Route>
       
     </div>
     </Router>

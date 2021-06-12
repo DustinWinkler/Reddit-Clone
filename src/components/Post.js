@@ -8,11 +8,11 @@ function Post(props) {
   let {path, url} = useRouteMatch
 
   return (
-    <div className="w-1/2 p-2 border border-gray-200 hover:border-gray-400 rounded shadow-lg">
-      <p>Author: {props.post.author}</p>
-      <h1>{props.post.title}</h1>
+    <div className="w-1/2 p-2 border border-gray-200 hover:border-gray-400 bg-white rounded shadow-lg">
+      <p>Posted by {props.post.author} in r/(ADDSUBREDDITTOPOSTS)</p>
+      <h1 className="text-lg">{props.post.title}</h1>
       <p>{props.post.content}</p>
-      <Link to={"/" + props.post.subreddit + "/comments/" + props.post.id } >Comments</Link>
+      <Link className="hover:text-blue-500" to={"/" + props.post.subreddit + "/comments/" + props.post.id } >(NUMBER) Comments</Link>
     </div>
   )
 }

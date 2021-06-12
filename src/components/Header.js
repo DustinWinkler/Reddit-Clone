@@ -52,7 +52,7 @@ function Header(props) {
   )
 
   return (
-    <div className="w-full">
+    <div className="w-full bg-white">
       <div className="border-b-2 border-black w-3/5 mx-auto text-center flex justify-around filter drop-shadow-lg">
       <div className="w-1/3 mt-1">
         <NavLink to="/subreddits" activeClassName="text-red-400" className="hover:text-blue-600">Subreddits</NavLink>

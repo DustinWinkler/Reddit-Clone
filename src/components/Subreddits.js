@@ -5,7 +5,6 @@ function Subreddits() {
 
   return (
     <div>
-      weiner2
       {subs.map(sub => {
         return (<p>{sub}</p>)
         // getSubInfo(sub) -> then put other info in here
