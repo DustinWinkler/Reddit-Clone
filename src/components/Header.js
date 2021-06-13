@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { NavLink } from "react-router-dom"
+import { createUser } from "../API/users"
 
 // Link to r/all, logo center, sign in/ sign up/ sign out
 // receive signed in as prop
@@ -7,23 +8,43 @@ import { NavLink } from "react-router-dom"
 function Header(props) {
   const [signingIn, setSigningIn] = useState(false)
   const [signingUp, setSigningUp] = useState(false)
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
 
+  useEffect(() => {
+    window.addEventListener('click', (e)=>{
+      if (e.target.id === 'signin-form' || e.target.id === 'signup-form') {
+        setSigningUp(false)
+        setSigningIn(false)
+      }
+    })
+  }, [])
+
+  function handleUsernameChange(e) {
+    setUsername(e.target.value)
+  }
+
+  function handlePasswordChange(e) {
+    setPassword(e.target.value)
+  }
 
   function handleSignUp(e) {
     e.preventDefault()
     props.signInFunc()
+    console.log(username, password)
     setSigningUp(false)
+
   }
-  
+
   const signUpForm = (
-    <div className="fixed min-h-screen h-full w-screen bg-gray-300 opacity-90 top-0">
+    <div id="signup-form" className="fixed min-h-screen h-full w-screen bg-gray-300 opacity-90 top-0">
       <div className="p-4 my-12 bg-blue-300 mx-auto max-w-80 w-2/5 border-2 rounded-xl border-black">
       <h1 className="mb-2">Sign Up</h1>
-        <form id="signin-form" className="block" onSubmit={handleSignUp}>
+        <form className="block" onSubmit={handleSignUp}>
           <label className="block">Username</label>
-          <input className="" for="Username"></input>
+          <input className="" value={username} onChange={handleUsernameChange} for="Username"></input>
           <label className="block">Password</label>
-          <input className="" for="Password"></input>
+          <input className="" value={password} onChange={handlePasswordChange} for="Password"></input>
           <input className="block text-center mx-auto my-2 border-2 border-blue-600 py-1 px-3 rounded-xl cursor-pointer hover:text-white hover:bg-blue-400 text-black bg-white" type="submit" value="Submit" />
         </form>
       </div>
@@ -37,14 +58,14 @@ function Header(props) {
   }
   
   const signInForm = (
-    <div className="fixed min-h-screen h-full w-screen bg-gray-300 opacity-90 top-0">
+    <div id="signin-form" className="fixed min-h-screen h-full w-screen bg-gray-300 opacity-90 top-0">
       <div className="p-4 my-12 bg-blue-300 mx-auto max-w-80 w-2/5 border-2 rounded-xl border-black">
       <h1 className="mb-2">Sign In</h1>
-        <form id="signin-form" className="block" onSubmit={handleSignIn}>
+        <form className="block" onSubmit={handleSignIn}>
           <label className="block">Username</label>
-          <input className="" for="Username"></input>
+          <input className="" value={username} onChange={handleUsernameChange} for="Username"></input>
           <label className="block">Password</label>
-          <input className="" for="Password"></input>
+          <input className="" value={password} onChange={handlePasswordChange} for="Password"></input>
           <input className="block text-center mx-auto my-2 border-2 border-blue-600 py-1 px-3 rounded-xl cursor-pointer hover:text-white hover:bg-blue-400 text-black bg-white" type="submit" value="Submit" />
         </form>
       </div>

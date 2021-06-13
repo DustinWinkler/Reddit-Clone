@@ -1,19 +1,28 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
 import Comments from './components/Comments';
 import Header from './components/Header'
 import Posts  from "./components/Posts";
 import Subreddits from './components/Subreddits';
+import firebase from './firebase'
+import { getUserInfo, usernamePasswordExists } from "./API/users"
 
 function App() {
   const [userSignedIn, setUserSignedIn] = useState(false)
 
+  useEffect(() => {
+    // use firestore sign up stuff/localstorage stuff
+    getUserInfo("Jimmy")
+  }, [])
+
   function signOut() {
     setUserSignedIn(false)
+    // add localstorage clear
   }
 
   function signIn() {
     setUserSignedIn(true)
+    // add localstorage setitem
   }
 
   return (

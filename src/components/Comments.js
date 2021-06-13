@@ -1,13 +1,20 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useParams } from "react-router-dom"
+import { getTopLevelComments, getChildComments } from "../API/comments"
 
 //need form at the top 
 // below list all comments on props.post
 
 function Comments(props) {
+  const [postID, setPostID] = useState(useParams().postid)
+  const [subreddit, setSubreddit] = useState(useParams().subreddit)
 
-  let postID = useParams().postid
-  let subreddit = useParams().subreddit
+  useEffect(() => {
+    console.log('getting comments')
+    getTopLevelComments(postID)
+  }, [])
+
+
 
   //Need to render Post from postid ^^
 

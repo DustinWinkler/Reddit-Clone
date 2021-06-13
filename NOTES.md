@@ -1,5 +1,51 @@
 * = maybe
 
+users {
+  username :unique, use as id
+  password
+  upvotes - contains post ids
+  funcs {
+    
+  }
+}
+
+
+post {
+  id :unique
+  title 
+  content, img or text
+  authorusername
+  subredditid
+  funcs {
+    getComments(postid)
+    postComment(postid)
+  }
+}
+
+the two below need test entries in firestore
+
+subreddit {
+  creator
+  aboutinfo
+  funcs {
+    getPosts(subredditid)
+  }
+}
+
+comment {
+  author
+  content
+  postid
+  comments -> {
+    commentid 
+  }
+}
+
+comment components thoughts
+  <Comment />
+  state for child comments i.e -> const [commentChildren, set...] = useState(get comments for this child)
+
+
 # Users
   ## features
     login/signup
@@ -39,4 +85,4 @@
   ## features
     groups post
     can go to an individual sub to see only posts from there
-    
+
