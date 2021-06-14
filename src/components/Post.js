@@ -7,6 +7,8 @@ import Comments from './Comments'
 function Post(props) {
   let {path, url} = useRouteMatch
 
+  console.log(props.post)
+
   return (
     <div className="w-1/2 p-2 border border-gray-200 hover:border-gray-400 bg-white rounded shadow-lg">
       <p>Posted by {props.post.author} in r/{props.post.subreddit}</p>

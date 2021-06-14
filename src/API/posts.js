@@ -5,15 +5,17 @@ async function getPosts(subreddit) {
   if (subreddit === 'all' || subreddit === "") {
     await db.collection('posts').get().then(query => {
       query.forEach(doc => {
-        console.log("post -> ", doc.data())
-        posts.push(doc.data())
+        let newPost = doc.data()
+        newPost['id'] = doc.id
+        posts.push(newPost)
       })
     })
   } else {
     await db.collection('posts').where('subreddit', '==', subreddit).get().then(query => {
       query.forEach(doc => {
-        console.log("post -> ", doc.data())
-        posts.push(doc.data())
+        let newPost = doc.data()
+        newPost['id'] = doc.id
+        posts.push(newPost)
       })
     })
   }
@@ -21,4 +23,14 @@ async function getPosts(subreddit) {
   return posts
 }
 
-export { getPosts }
+async function getPost(postID) {
+  let post = {}
+  await db.collection("posts").doc(postID).get().then(doc => {
+    post = doc.data()
+    post["id"] = doc.id
+  })
+  console.log("return from getPost -> ", post)
+  return post
+}
+
+export { getPosts, getPost }

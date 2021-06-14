@@ -27,11 +27,21 @@ async function createUser(username, password) {
   })
 }
 
+async function userExists(username) {
+  let user = await getUserInfo(username)
+
+  if (user.password) {
+    return true
+  } else {
+    return false
+  }
+}
+
 async function usernamePasswordExists(username, password) {
   let user = await getUserInfo(username)
-  
+  console.log("login user -> ", !!user.password)
   // if user exists
-  if (user.username) {
+  if (user.password) {
     // if password matches
     if (user.password === password) {
       return true
@@ -67,7 +77,8 @@ async function decrementCommentKarma(username) {
 async function incrementPostKarna(username) {
   let userInfo = await getUserInfo(username)
 
-  let userRef = db.collection("users").doc(username);
+  let userRef = db.collection("users").doc(username)
+  
   userRef.update({
     postkarma: userInfo.postkarma + 1
   })
@@ -76,10 +87,11 @@ async function incrementPostKarna(username) {
 async function decrementPostKarma(username) {
   let userInfo = await getUserInfo(username)
 
-  let userRef = db.collection("users").doc(username);
+  let userRef = db.collection("users").doc(username)
+
   userRef.update({
     postkarma: userInfo.postkarma - 1
   })
 }
 
-export { getUserInfo, createUser, usernamePasswordExists, incrementCommentKarma, decrementCommentKarma, incrementPostKarna, decrementPostKarma }
+export { getUserInfo, createUser, usernamePasswordExists, incrementCommentKarma, decrementCommentKarma, incrementPostKarna, decrementPostKarma, userExists }

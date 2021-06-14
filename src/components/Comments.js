@@ -1,16 +1,26 @@
 import React, { useState, useEffect } from 'react'
 import { useParams } from "react-router-dom"
 import { getTopLevelComments, getChildComments } from "../API/comments"
+import { getPost } from "../API/posts"
+import Post from './Post'
 
 //need form at the top 
 // below list all comments on props.post
 
 function Comments(props) {
+  const [post, setPost] = useState({})
+  const [loadingPost, setLoadingPost] = useState(true)
   const [postID, setPostID] = useState(useParams().postid)
   const [subreddit, setSubreddit] = useState(useParams().subreddit)
 
   useEffect(() => {
-    console.log('getting comments')
+    getPost(postID).then(post => {
+      setPost(post)
+      setLoadingPost(false)
+    })
+  }, [])
+
+  useEffect(() => {
     getTopLevelComments(postID)
   }, [])
 
@@ -20,6 +30,11 @@ function Comments(props) {
 
   return (
     <div className="w-3/5 mx-auto m-2 justify-space-around bg-white">
+      <div>
+        { loadingPost ? "loading post" :
+          <Post post={post} />}
+      </div>
+
       <div className="flex">
         <form className="relative border border-gray-400 w-full mr-2">
           <textarea className="w-full" placeholder="Write your comment." />

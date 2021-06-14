@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { NavLink } from "react-router-dom"
-import { createUser } from "../API/users"
+import { createUser, usernamePasswordExists, userExists } from "../API/users"
 
 // Link to r/all, logo center, sign in/ sign up/ sign out
 // receive signed in as prop
@@ -10,6 +10,8 @@ function Header(props) {
   const [signingUp, setSigningUp] = useState(false)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+
+
 
   useEffect(() => {
     window.addEventListener('click', (e)=>{
@@ -30,10 +32,14 @@ function Header(props) {
 
   function handleSignUp(e) {
     e.preventDefault()
-    props.signInFunc()
-    console.log(username, password)
-    setSigningUp(false)
 
+    userExists(username).then(val => {
+      if (val) {
+        alert("That username is taken")
+      } else {
+        createUser(username, password)
+      }
+    })
   }
 
   const signUpForm = (
@@ -42,9 +48,9 @@ function Header(props) {
       <h1 className="mb-2">Sign Up</h1>
         <form className="block" onSubmit={handleSignUp}>
           <label className="block">Username</label>
-          <input className="" value={username} onChange={handleUsernameChange} for="Username"></input>
+          <input className="" value={username} onChange={handleUsernameChange} htmlFor="Username"></input>
           <label className="block">Password</label>
-          <input className="" value={password} onChange={handlePasswordChange} for="Password"></input>
+          <input className="" value={password} onChange={handlePasswordChange} htmlFor="Password"></input>
           <input className="block text-center mx-auto my-2 border-2 border-blue-600 py-1 px-3 rounded-xl cursor-pointer hover:text-white hover:bg-blue-400 text-black bg-white" type="submit" value="Submit" />
         </form>
       </div>
@@ -53,8 +59,15 @@ function Header(props) {
   
   function handleSignIn(e) {
     e.preventDefault()
-    props.signInFunc()
-    setSigningIn(false)
+    
+    usernamePasswordExists(username, password).then(val => {
+      if (val) {
+        props.signInFunc()
+        setSigningIn(false)
+      } else {
+        alert("Invalid credentials")
+      }
+    })
   }
   
   const signInForm = (

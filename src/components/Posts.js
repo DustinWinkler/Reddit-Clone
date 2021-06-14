@@ -18,21 +18,16 @@ function Posts(props) {
 		} else {
 			setSubreddit(props.subreddit)
 		}	
-		console.log("subreddit -> ", subreddit)
 		getPosts(subreddit).then(val => {
 			setPosts(val)
 			setTimeout(setLoadingPosts(false), 500)
 		})
 	}, [])
 
-  
-
-  console.log(posts)
-
   return (
     <div className="mt-4 w-3/5 mx-auto">
       { loadingPosts ? "Loading posts" :
-			posts.map(post => {return (<Post post={post} />)
+			posts.map(post => {return (<Post key={post.id} post={post} />)
       })}
     </div>
   )

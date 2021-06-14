@@ -12,15 +12,19 @@ function App() {
 
   useEffect(() => {
     // use firestore sign up stuff/localstorage stuff
-    getUserInfo("Jimmy")
+    if(localStorage.getItem("curr_user") !== null) {
+      signIn(localStorage.getItem("curr_user"))
+    }
   }, [])
 
   function signOut() {
     setUserSignedIn(false)
+    localStorage.removeItem("curr_user")
     // add localstorage clear
   }
 
-  function signIn() {
+  function signIn(username) {
+    localStorage.setItem('curr_user', username)
     setUserSignedIn(true)
     // add localstorage setitem
   }
