@@ -6,6 +6,7 @@ import Posts  from "./components/Posts";
 import Subreddits from './components/Subreddits';
 import firebase from './firebase'
 import { getUserInfo, usernamePasswordExists } from "./API/users"
+import { hasChildren } from "./API/comments"
 
 function App() {
   const [userSignedIn, setUserSignedIn] = useState(false)

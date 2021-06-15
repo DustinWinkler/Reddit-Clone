@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useParams } from "react-router-dom"
-import { getTopLevelComments, getChildComments } from "../API/comments"
+import { getTopLevelCommentIDs, getChildComments } from "../API/comments"
 import { getPost } from "../API/posts"
 import Post from './Post'
 
@@ -21,7 +21,7 @@ function Comments(props) {
   }, [])
 
   useEffect(() => {
-    getTopLevelComments(postID)
+    getTopLevelCommentIDs(postID)
   }, [])
 
 

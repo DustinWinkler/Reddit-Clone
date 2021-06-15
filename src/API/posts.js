@@ -19,7 +19,6 @@ async function getPosts(subreddit) {
       })
     })
   }
-  console.log('get posts return -> ', posts)
   return posts
 }
 
@@ -29,7 +28,6 @@ async function getPost(postID) {
     post = doc.data()
     post["id"] = doc.id
   })
-  console.log("return from getPost -> ", post)
   return post
 }
 
