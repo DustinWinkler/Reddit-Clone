@@ -27,7 +27,7 @@ function Comment(props) {
   }, [hasChildren])
 
   return (
-    <div className="my-2 p-2 border">
+    <div className="my-2 p-2 border bg-white">
       <div className="m-1">
         <p className="text-xs text-gray-600 curesor-pointer hover:underline">{props.comment.author}</p>
         <p>{props.comment.content}</p>

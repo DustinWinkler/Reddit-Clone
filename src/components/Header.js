@@ -43,7 +43,7 @@ function Header(props) {
   }
 
   const signUpForm = (
-    <div id="signup-form" className="fixed min-h-screen h-full w-screen bg-gray-300 opacity-90 top-0">
+    <div id="signup-form" className="fixed min-h-screen h-full w-screen bg-gray-300 opacity-90 z-50 top-0">
       <div className="p-4 my-12 bg-blue-300 mx-auto max-w-80 w-2/5 border-2 rounded-xl border-black">
       <h1 className="mb-2">Sign Up</h1>
         <form className="block" onSubmit={handleSignUp}>
@@ -71,7 +71,7 @@ function Header(props) {
   }
   
   const signInForm = (
-    <div id="signin-form" className="fixed min-h-screen h-full w-screen bg-gray-300 opacity-90 top-0">
+    <div id="signin-form" className="fixed min-h-screen h-full w-screen bg-gray-300 opacity-90 z-50 top-0">
       <div className="p-4 my-12 bg-blue-300 mx-auto max-w-80 w-2/5 border-2 rounded-xl border-black">
       <h1 className="mb-2">Sign In</h1>
         <form className="block" onSubmit={handleSignIn}>

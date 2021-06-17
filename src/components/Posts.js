@@ -25,7 +25,7 @@ function Posts(props) {
 	}, [])
 
   return (
-    <div className="mt-4 w-3/5 mx-auto">
+    <div className="mt-4 w-3/5 mx-auto striped">
       { loadingPosts ? "Loading posts" :
 			posts.map(post => {return (<Post key={post.id} post={post} />)
       })}

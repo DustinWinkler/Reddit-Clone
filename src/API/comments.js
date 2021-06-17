@@ -53,4 +53,8 @@ async function replyToComment(content, idToReplyTo) {
   // call create comment then append its id to reply
 }
 
+async function getTotalComments(postID) {
+  // comments.length and then recursively check for children on those
+}
+
 export { getComment, getTopLevelCommentIDs, getChildComments, hasChildren }
