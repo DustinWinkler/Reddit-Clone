@@ -39,7 +39,6 @@ async function userExists(username) {
 
 async function usernamePasswordExists(username, password) {
   let user = await getUserInfo(username)
-  console.log("login user -> ", !!user.password)
   // if user exists
   if (user.password) {
     // if password matches
@@ -78,7 +77,7 @@ async function incrementPostKarna(username) {
   let userInfo = await getUserInfo(username)
 
   let userRef = db.collection("users").doc(username)
-  
+
   userRef.update({
     postkarma: userInfo.postkarma + 1
   })

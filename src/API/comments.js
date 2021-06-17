@@ -6,6 +6,7 @@ async function getComment(commentID) {
 
   await db.collection("comments").doc(commentID).get().then(doc => {
     comment = doc.data()
+    comment['id'] = doc.id
   })
   return comment
 }
@@ -42,6 +43,8 @@ async function hasChildren(commentID) {
   return bool
 }
 
+
+// for two below -> to get doc id for purposes of appending it to posts or other comments do -> let newComment = db.collection("comments").doc(), then you can do newComment.id and then newComment.set(data)
 async function createComment(content) {
 
 }

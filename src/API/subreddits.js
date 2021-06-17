@@ -11,4 +11,18 @@ async function getSubredditsList() {
   return subs
 }
 
-export { getSubredditsList }
+async function getSubredditInfo(subredditName) {
+  let content = ""
+
+  await db.collection("subreddits").doc(subredditName).get().then(doc => {
+    let subreddit = doc.data()
+    content = subreddit.description
+  })
+  return content
+}
+
+async function createSubreddit(name, description) {
+
+}
+
+export { getSubredditsList, getSubredditInfo, createSubreddit }
