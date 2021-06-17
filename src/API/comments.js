@@ -43,6 +43,21 @@ async function hasChildren(commentID) {
   return bool
 }
 
+async function incrementKarma(commentID) {
+  let comment = await getComment(commentID)
+ 
+  db.collection("comments").doc(commentID).update({
+    votes: comment.votes + 1
+  })
+}
+
+async function decrementKarma(commentID) {
+  let comment = await getComment(commentID)
+
+  db.collection("comments").doc(commentID).update({
+    votes: comment.votes - 1
+  })
+}
 
 // for two below -> to get doc id for purposes of appending it to posts or other comments do -> let newComment = db.collection("comments").doc(), then you can do newComment.id and then newComment.set(data)
 async function createComment(content) {
@@ -57,4 +72,4 @@ async function getTotalComments(postID) {
   // comments.length and then recursively check for children on those
 }
 
-export { getComment, getTopLevelCommentIDs, getChildComments, hasChildren }
+export { getComment, getTopLevelCommentIDs, getChildComments, hasChildren, incrementKarma, decrementKarma }

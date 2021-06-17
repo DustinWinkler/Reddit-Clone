@@ -7,6 +7,7 @@ async function getUserInfo(username) {
   await userRef.get().then((doc) => {
     if (doc.exists) {
       user = doc.data()
+      user["username"] = doc.id
     } else {
       console.log("No such document!");
     }
@@ -23,7 +24,9 @@ async function createUser(username, password) {
     commentkarma: 0,
     password: password,
     postkarma: 0,
-    posts: []
+    posts: [],
+    downvotedIDs: [],
+    upvotedIDs: []
   })
 }
 
@@ -54,43 +57,10 @@ async function usernamePasswordExists(username, password) {
 
 }
 
-async function incrementCommentKarma(username) {
-  let userInfo = await getUserInfo(username)
-
-  let userRef = db.collection("users").doc(username);
-  userRef.update({
-    commentkarma: userInfo.commentkarma + 1
-  })
+async function updateUser(username, user) {
+  console.log("username -> ", username, "user -> ", user)
+  db.collection("users").doc(username).update(user)
 
 }
 
-async function decrementCommentKarma(username) {
-  let userInfo = await getUserInfo(username)
-
-  let userRef = db.collection("users").doc(username);
-  userRef.update({
-    commentkarma: userInfo.commentkarma - 1
-  })
-}
-
-async function incrementPostKarna(username) {
-  let userInfo = await getUserInfo(username)
-
-  let userRef = db.collection("users").doc(username)
-
-  userRef.update({
-    postkarma: userInfo.postkarma + 1
-  })
-}
-
-async function decrementPostKarma(username) {
-  let userInfo = await getUserInfo(username)
-
-  let userRef = db.collection("users").doc(username)
-
-  userRef.update({
-    postkarma: userInfo.postkarma - 1
-  })
-}
-
-export { getUserInfo, createUser, usernamePasswordExists, incrementCommentKarma, decrementCommentKarma, incrementPostKarna, decrementPostKarma, userExists }
+export { getUserInfo, createUser, usernamePasswordExists, userExists, updateUser }

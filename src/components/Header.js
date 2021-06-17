@@ -62,7 +62,7 @@ function Header(props) {
     
     usernamePasswordExists(username, password).then(val => {
       if (val) {
-        props.signInFunc()
+        props.signInFunc(username)
         setSigningIn(false)
       } else {
         alert("Invalid credentials")
@@ -96,7 +96,10 @@ function Header(props) {
       <NavLink exact to="/" activeClassName="text-red-400" className="text-2xl w-1/3 cursor-pointer hover:text-blue-600">Reddit</NavLink>
 
       {props.signedIn ? 
-      <button onClick={()=>{props.signOutFunc()}} className="w-1/3 hover:text-blue-600">Sign Out</button> :
+      <div className="flex justify-around w-1/3">
+        <span className="m-auto">Signed in as {localStorage.getItem("curr_user")}</span>
+        <button onClick={()=>{props.signOutFunc()}} className="w-1/3 hover:text-blue-600">Sign Out</button>
+      </div> :
       <div className="flex justify-around w-1/3">
         <button onClick={()=>{setSigningIn(true)}} className="hover:text-blue-600">Sign In</button>
         <button onClick={()=>{setSigningUp(true)}} className="hover:text-blue-600">Sign Up</button>

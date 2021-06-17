@@ -26,6 +26,7 @@ function App() {
 
   function signIn(username) {
     localStorage.setItem('curr_user', username)
+    getUserInfo(username).then(user => localStorage.setItem("userInfo", JSON.stringify(user)))
     setUserSignedIn(true)
     // add localstorage setitem
   }
@@ -48,7 +49,7 @@ function App() {
       </Route>
 
       <Route path="/:subreddit/comments/:postid">
-        <Comments />
+        <Comments loggedIn={userSignedIn} />
       </Route>
       
     </div>
