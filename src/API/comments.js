@@ -43,19 +43,19 @@ async function hasChildren(commentID) {
   return bool
 }
 
-async function incrementKarma(commentID) {
+async function incrementKarma(commentID, num) {
   let comment = await getComment(commentID)
  
   db.collection("comments").doc(commentID).update({
-    votes: comment.votes + 1
+    votes: comment.votes + num
   })
 }
 
-async function decrementKarma(commentID) {
+async function decrementKarma(commentID, num) {
   let comment = await getComment(commentID)
 
   db.collection("comments").doc(commentID).update({
-    votes: comment.votes - 1
+    votes: comment.votes - num
   })
 }
 

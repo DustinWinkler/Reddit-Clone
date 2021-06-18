@@ -12,6 +12,7 @@ function Comment(props) {
   const [userInfo, setUserInfo] = useState(JSON.parse(localStorage.getItem("userInfo")))
   const [hasUpvoted, setHasUpvoted] = useState(false)
   const [hasDownvoted, setHasDownvoted] = useState(false)
+  const [votingDisabled, setVotingDisabled] = useState(false)
 
   // check for children
   useEffect(() => {
@@ -36,15 +37,12 @@ function Comment(props) {
 
   // check vote status
   useEffect(() => {
-    console.log("comment voted on ? -> ", userInfo.upvotedIDs.includes(props.comment.id))
     // if comment id is in up or down voted arrays, set vote status
-    if (userInfo.upvotedIDs.includes(props.comment.id)) {
+    if (userInfo && userInfo.upvotedIDs.includes(props.comment.id)) {
       setHasUpvoted(true)
-    } else if (userInfo.downvotedIDs.includes(props.comment.id)) {
+    } else if (userInfo && userInfo.downvotedIDs.includes(props.comment.id)) {
       setHasDownvoted(true)
     }
-
-    
   }, [])
 
   function getUpdatedUser() {
@@ -56,10 +54,19 @@ function Comment(props) {
   }
 
   function upvote() {
+    if (votingDisabled) {
+      alert("Slow down there Bucko! My DB cannot handle calls this quickly.")
+      return
+    }
+
+    let incrementCount = 1
     getUpdatedUser()
 
     // if downvoted, remove it
-    if (hasDownvoted) {downvote()}
+    if (hasDownvoted) {
+      setHasDownvoted(false)
+      incrementCount += 1
+    }
 
     if (loggedIn) {
       let user = userInfo
@@ -73,27 +80,38 @@ function Comment(props) {
         updateUser(username, user)
         setHasUpvoted(false)
         setNetVotes(prev => prev - 1)
-        decrementKarma(props.comment.id)
+        decrementKarma(props.comment.id, 1)
       } else {
         user.upvotedIDs.push(props.comment.id)
         setUserInfo(user)
         updateUser(username, user)
         setHasUpvoted(true)
-        setNetVotes(prev => prev + 1)
-        incrementKarma(props.comment.id)
+        setNetVotes(prev => prev + incrementCount)
+        incrementKarma(props.comment.id, incrementCount)
       }
 
       setUpdatedUser(user)
     } else {
       alert("You must be logged in to vote on stuff!")
     }
+
+    setVotingDisabled(true)
+    setTimeout(()=>{setVotingDisabled(false)}, 2000)
   }
 
   function downvote() {
-    getUpdatedUser()
+    if (votingDisabled) {
+      alert("Slow down there Bucko! My DB cannot handle calls this quickly.")
+      return
+    }
 
+    let decrementCount = 1
+    getUpdatedUser()
     // if upvoted remove that upvote
-    if(hasUpvoted) {upvote()}
+    if(hasUpvoted) {
+      setHasUpvoted(false)
+      decrementCount += 1
+    }
 
     if (loggedIn) {
       let user = userInfo
@@ -105,20 +123,23 @@ function Comment(props) {
         updateUser(username, user)
         setHasDownvoted(false)
         setNetVotes(prev => prev + 1)
-        incrementKarma(props.comment.id)
+        incrementKarma(props.comment.id, 1)
       } else {
         user.downvotedIDs.push(props.comment.id)
         setUserInfo(user)
         updateUser(username, user)
         setHasDownvoted(true)
-        setNetVotes(prev => prev - 1)
-        decrementKarma(props.comment.id)
+        setNetVotes(prev => prev - decrementCount)
+        decrementKarma(props.comment.id, decrementCount)
       }
 
       setUpdatedUser(user)
     } else {
       alert("You must be logged in to vote on stuff!")
     }
+
+    setVotingDisabled(true)
+    setTimeout(()=>{setVotingDisabled(false)}, 2000)
   }
 
   return (
