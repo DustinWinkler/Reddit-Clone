@@ -27,7 +27,7 @@ function Comment(props) {
         ids.forEach(id => promises.push(getComment(id)))
         Promise.all(promises).then(comments => {
           comments.forEach(comment => commentsToSet.push(comment))
-          setChildComments(commentsToSet)
+          setChildComments(commentsToSet.sort((a, b) => b.votes - a.votes))
         })
       })
     }

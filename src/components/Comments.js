@@ -48,7 +48,7 @@ function Comments(props) {
     })
 
     Promise.all(promises).then(comments => {
-      setComments(comments)
+      setComments(comments.sort((a, b) => b.votes - a.votes))
       setLoadingComments(false)
     })
   }, [commentIDs])
