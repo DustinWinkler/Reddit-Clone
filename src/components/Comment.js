@@ -1,18 +1,13 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React, { useState, useEffect} from 'react'
-import { getChildComments, getComment, incrementKarma, decrementKarma } from '../API/comments'
-import { faLongArrowAltDown, faLongArrowAltUp, faReply } from '@fortawesome/free-solid-svg-icons'
-import { getUserInfo, updateUser } from '../API/users'
+import React, { useState, useEffect, useContext } from 'react'
+import { getChildComments, getComment } from '../API/comments'
+import {LoggedInContext} from "../App"
+import Votes from './Votes'
 
 function Comment(props) {
   const [hasChildren, setHasChildren] = useState(false)
   const [childComments, setChildComments] = useState([])
-  const [netVotes, setNetVotes] = useState(props.comment.votes)
-  const [loggedIn, setLoggedIn] = useState(props.loggedIn)
-  const [userInfo, setUserInfo] = useState(JSON.parse(localStorage.getItem("userInfo")))
-  const [hasUpvoted, setHasUpvoted] = useState(false)
-  const [hasDownvoted, setHasDownvoted] = useState(false)
-  const [votingDisabled, setVotingDisabled] = useState(false)
+  const loggedIn = useContext(LoggedInContext)
+  
 
   // check for children
   useEffect(() => {
@@ -35,122 +30,12 @@ function Comment(props) {
     
   }, [hasChildren])
 
-  // check vote status
-  useEffect(() => {
-    // if comment id is in up or down voted arrays, set vote status
-    if (userInfo && userInfo.upvotedIDs.includes(props.comment.id)) {
-      setHasUpvoted(true)
-    } else if (userInfo && userInfo.downvotedIDs.includes(props.comment.id)) {
-      setHasDownvoted(true)
-    }
-  }, [])
-
-  function getUpdatedUser() {
-    setUserInfo(JSON.parse(localStorage.getItem("userInfo")))
-  }
-
-  function setUpdatedUser(user) {
-    localStorage.setItem("userInfo", JSON.stringify(user))
-  }
-
-  function upvote() {
-    if (votingDisabled) {
-      alert("Slow down there Bucko! My DB cannot handle calls this quickly.")
-      return
-    }
-
-    let incrementCount = 1
-    getUpdatedUser()
-
-    // if downvoted, remove it
-    if (hasDownvoted) {
-      setHasDownvoted(false)
-      incrementCount += 1
-    }
-
-    if (loggedIn) {
-      let user = userInfo
-      let username = user.username
-
-      if (hasUpvoted) {
-        let index = user.upvotedIDs.indexOf(props.comment.id)
-        user.upvotedIDs.splice(index, 1)
-        setUserInfo(user)
-        console.log("just before update -> user: ", user, "username: ", username)
-        updateUser(username, user)
-        setHasUpvoted(false)
-        setNetVotes(prev => prev - 1)
-        decrementKarma(props.comment.id, 1)
-      } else {
-        user.upvotedIDs.push(props.comment.id)
-        setUserInfo(user)
-        updateUser(username, user)
-        setHasUpvoted(true)
-        setNetVotes(prev => prev + incrementCount)
-        incrementKarma(props.comment.id, incrementCount)
-      }
-
-      setUpdatedUser(user)
-    } else {
-      alert("You must be logged in to vote on stuff!")
-    }
-
-    setVotingDisabled(true)
-    setTimeout(()=>{setVotingDisabled(false)}, 2000)
-  }
-
-  function downvote() {
-    if (votingDisabled) {
-      alert("Slow down there Bucko! My DB cannot handle calls this quickly.")
-      return
-    }
-
-    let decrementCount = 1
-    getUpdatedUser()
-    // if upvoted remove that upvote
-    if(hasUpvoted) {
-      setHasUpvoted(false)
-      decrementCount += 1
-    }
-
-    if (loggedIn) {
-      let user = userInfo
-      let username = user.username
-      if (hasDownvoted) {
-        let index = user.downvotedIDs.indexOf(props.comment.id)
-        user.downvotedIDs.splice(index, 1)
-        setUserInfo(user)
-        updateUser(username, user)
-        setHasDownvoted(false)
-        setNetVotes(prev => prev + 1)
-        incrementKarma(props.comment.id, 1)
-      } else {
-        user.downvotedIDs.push(props.comment.id)
-        setUserInfo(user)
-        updateUser(username, user)
-        setHasDownvoted(true)
-        setNetVotes(prev => prev - decrementCount)
-        decrementKarma(props.comment.id, decrementCount)
-      }
-
-      setUpdatedUser(user)
-    } else {
-      alert("You must be logged in to vote on stuff!")
-    }
-
-    setVotingDisabled(true)
-    setTimeout(()=>{setVotingDisabled(false)}, 2000)
-  }
-
   return (
     <div className="my-2 p-2 border bg-white">
-      <div className="m-1">
+      <div>
         <p className="text-xs text-gray-600 curesor-pointer hover:underline">{props.comment.author}</p>
         <p>{props.comment.content}</p>
-        <span onClick={upvote} className={ (hasUpvoted ? "fill-curret text-yellow-500 " : "fill-curret text-gray-500 ") + "mx-1 cursor-pointer rounded-full px-2 hover:bg-gray-300"}><FontAwesomeIcon icon={faLongArrowAltUp} /></span>
-        <span>{netVotes}</span>
-        <span onClick={downvote} className={ (hasDownvoted ? "fill-curret text-indigo-500 " : "fill-curret text-gray-500 ") + "mx-1 cursor-pointer rounded-full px-2 hover:bg-gray-300"}><FontAwesomeIcon icon={faLongArrowAltDown} /></span>
-        <span className="mx-1 cursor-pointer rounded-full px-2 hover:bg-gray-300 fill-curret text-blue-400"><FontAwesomeIcon icon={faReply} /></span>
+        <Votes type="comment" loggedIn={loggedIn} content={props.comment} /> 
       </div>
       
       <div className="ml-2 border-l-2 pl-2">

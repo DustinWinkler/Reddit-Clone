@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { NavLink } from "react-router-dom"
 import { createUser, usernamePasswordExists, userExists } from "../API/users"
+import { LoggedInContext } from '../App'
 
 // Link to r/all, logo center, sign in/ sign up/ sign out
 // receive signed in as prop
@@ -11,7 +12,7 @@ function Header(props) {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
-
+  const loggedIn = useContext(LoggedInContext)
 
   useEffect(() => {
     window.addEventListener('click', (e)=>{
@@ -95,7 +96,7 @@ function Header(props) {
       {/* Link to Home */}
       <NavLink exact to="/" activeClassName="text-red-400" className="text-2xl w-1/3 cursor-pointer hover:text-blue-600">Reddit</NavLink>
 
-      {props.signedIn ? 
+      {loggedIn ? 
       <div className="flex justify-around w-1/3">
         <span className="m-auto">Signed in as {localStorage.getItem("curr_user")}</span>
         <button onClick={()=>{props.signOutFunc()}} className="w-1/3 hover:text-blue-600">Sign Out</button>

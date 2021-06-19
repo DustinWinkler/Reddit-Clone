@@ -31,4 +31,20 @@ async function getPost(postID) {
   return post
 }
 
-export { getPosts, getPost }
+async function incrementKarma(postID, num) {
+  let post = await getPost(postID)
+ 
+  db.collection("posts").doc(postID).update({
+    votes: post.votes + num
+  })
+}
+
+async function decrementKarma(postID, num) {
+  let post = await getPost(postID)
+
+  db.collection("posts").doc(postID).update({
+    votes: post.votes - num
+  })
+}
+
+export { getPosts, getPost, incrementKarma, decrementKarma }

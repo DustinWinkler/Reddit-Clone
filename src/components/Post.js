@@ -1,11 +1,11 @@
-import React from 'react'
-import { Link, useRouteMatch } from 'react-router-dom'
-import Comments from './Comments'
-
-// add comments, cheeck react docs
+import React, { useContext } from 'react'
+import { Link } from 'react-router-dom'
+import Votes from './Votes'
+import {LoggedInContext} from '../App'
 
 function Post(props) {
-  let {path, url} = useRouteMatch
+  const loggedIn = useContext(LoggedInContext)
+  console.log("post useContext loggedIn status -> ", loggedIn)
 
   return (
     <div className="p-2 border border-gray-200 hover:border-gray-400 bg-white rounded shadow-lg">
@@ -14,6 +14,7 @@ function Post(props) {
       <p>{props.post.content}</p>
       {props.comments === 'disabled' ? "" :
       <Link className="hover:text-blue-500" to={"/" + props.post.subreddit + "/comments/" + props.post.id } >(NUMBER) Comments</Link>}
+      <Votes type="post" content={props.post} loggedIn={loggedIn} />
     </div>
   )
 }
