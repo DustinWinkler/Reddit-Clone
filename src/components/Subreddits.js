@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react'
+import { Link } from 'react-router-dom'
 import{ getSubredditsList } from "../API/subreddits"
 
 function Subreddits() {
@@ -10,13 +11,19 @@ function Subreddits() {
       setSubList(list)
       setLoadingSubs(false)
     })
-  }, []) 
+  }, [])
 
   return (
     <div>
       { loadingSubs ? "Loading Subreddits" :
       subList.map(sub => {
-        return (<p>{sub}</p>)
+        return (
+        <div>
+          <Link to={'/' + sub}>
+            {sub}
+          </Link>
+        </div>
+        )
         // getSubInfo(sub) -> then put other info in here
       })}
     </div>

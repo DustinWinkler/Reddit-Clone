@@ -6,6 +6,9 @@ import Votes from './Votes'
 function Comment(props) {
   const [hasChildren, setHasChildren] = useState(false)
   const [childComments, setChildComments] = useState([])
+  const [showForm, setShowForm] = useState(false)
+  const [formContent, setFormContent] = useState('')
+
   const loggedIn = useContext(LoggedInContext)
   
 
@@ -30,12 +33,39 @@ function Comment(props) {
     
   }, [hasChildren])
 
+  let commentForm = (
+    <div>
+      <form>
+        <label>
+          <textarea className="block p-1 border border-gray-500 rounded w-4/5" placeholder="Comment." rows="3" onChange={handleChange} />
+        </label>
+        <input className="p-1" type="submit" />
+      </form>
+    </div>
+  )
+
+  function handleChange(e) {
+    setFormContent(e.target.value)
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault()
+    // add new Comment object to children
+    
+    // send identical object to DB
+  }
+
+  const toggleForm = () => {
+    setShowForm(!showForm)
+  }
+
   return (
     <div className="my-2 p-2 border bg-white">
       <div>
         <p className="text-xs text-gray-600 curesor-pointer hover:underline">{props.comment.author}</p>
         <p>{props.comment.content}</p>
-        <Votes type="comment" loggedIn={loggedIn} content={props.comment} /> 
+        <Votes type="comment" loggedIn={loggedIn} replyFunc={toggleForm} content={props.comment} /> 
+        {showForm ? commentForm : ""}
       </div>
       
       <div className="ml-2 border-l-2 pl-2">

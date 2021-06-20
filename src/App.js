@@ -1,9 +1,10 @@
 import React, { useState, useEffect, createContext } from 'react'
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
-import Comments from './components/Comments';
+import Comments from './components/Comments'
 import Header from './components/Header'
-import Posts  from "./components/Posts";
-import Subreddits from './components/Subreddits';
+import Posts  from "./components/Posts"
+import Subreddits from './components/Subreddits'
+import Subreddit from './components/Subreddit'
 import { getUserInfo } from "./API/users"
 
 export const LoggedInContext = createContext()
@@ -38,21 +39,14 @@ function App() {
     <LoggedInContext.Provider value={userSignedIn}>
       <Router>
         <div className="">
-        <Header signOutFunc={signOut} signInFunc={signIn} signedIn={userSignedIn} />
+        <Header signOutFunc={signOut} signInFunc={signIn} />
 
-        <Route exact path="/">
-          <div>
-          <Posts />
-          </div>
-        </Route>
-
-        <Route exact path="/subreddits">
-          <Subreddits />
-        </Route>
-
-        <Route path="/:subreddit/comments/:postid">
-          <Comments loggedIn={userSignedIn} />
-        </Route>
+        <Switch>
+          <Route exact path='/' component={Posts} />
+          <Route path='/subreddits' component={Subreddits} />
+          <Route path='/:subreddit' component={Subreddit} />
+          <Route path='/:subreddit/comments/:postid' component={Comments} />
+        </Switch>
         
       </div>
       </Router>

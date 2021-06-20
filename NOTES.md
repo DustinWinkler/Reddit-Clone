@@ -9,35 +9,11 @@ users {
   }
 }
 
-
-post {
-  id :unique
-  title 
-  content, img or text
-  authorusername
-  subredditid
-  funcs {
-    getComments(postid)
-    postComment(postid)
-  }
-}
-
-the two below need test entries in firestore
-
-subreddit {
-  creator
-  aboutinfo
-  funcs {
-    getPosts(subredditid)
-  }
-}
-
-comment {
-  author
-  content
-  postid
-  comments -> {
-    commentid 
+comment hierarchy {
+  post {
+    top level comments (comments is posts comment array) {
+      for each comment in this level of nesting and below ... make nested comments
+    }
   }
 }
 

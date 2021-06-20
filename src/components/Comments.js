@@ -53,8 +53,12 @@ function Comments(props) {
     })
   }, [commentIDs])
 
-
-  //Need to render Post from postid ^^
+  function handleSubmit(e) {
+    e.preventDefault()
+    // add new Comment object to children
+    
+    // send identical object to DB
+  }
 
   return (
     <div className="w-3/5 mx-auto m-2 justify-space-around bg-white striped">
@@ -74,7 +78,7 @@ function Comments(props) {
       </div>
 
       <div className="flex w-3/5">
-        <form className="w-full mr-2">
+        <form className="w-full mr-2" onSubmit={handleSubmit}>
           <textarea className="w-full p-3 border rounded-xl" rows="4" placeholder="Write your comment." />
           <input className="text-center border-2 border-blue-500 w-36 rounded-lg" value="Post Comment" type="submit" /> 
         </form>
