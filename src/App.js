@@ -44,8 +44,9 @@ function App() {
         <Switch>
           <Route exact path='/' component={Posts} />
           <Route path='/subreddits' component={Subreddits} />
-          <Route path='/:subreddit' component={Subreddit} />
           <Route path='/:subreddit/comments/:postid' component={Comments} />
+          <Route exact path='/:subreddit' component={Subreddit} />
+          
         </Switch>
         
       </div>
