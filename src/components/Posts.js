@@ -1,6 +1,7 @@
 import React, { useState,useEffect } from 'react'
 import Post from "./Post";
 import { getPosts } from '../API/posts'
+import LoadingIcon from './LoadingIcon';
 
 //receive 'all' or subreddit name and create a Post for each post in given sub
  
@@ -26,7 +27,7 @@ function Posts(props) {
 
   return (
     <div className="mt-4 w-3/5 mx-auto striped">
-      { loadingPosts ? "Loading posts" :
+      { loadingPosts ? <LoadingIcon/> :
 			posts.map(post => {return (<Post key={post.id} post={post} />)
       })}
     </div>

@@ -1,11 +1,13 @@
 import {db} from "../firebase"
 
-async function getSubredditsList() {
+async function getAllSubreddits() {
   let subs = []
 
   await db.collection("subreddits").get().then(query => {
     query.forEach(doc => {
-      subs.push(doc.id)
+      let sub = doc.data()
+      sub["id"] = doc.id
+      subs.push(sub)
     })
   })
   return subs
@@ -18,11 +20,12 @@ async function getSubredditInfo(subredditName) {
     let subreddit = doc.data()
     content = subreddit.description
   })
+  console.log("getsubinfo content -> ", content)
   return content
 }
 
-async function createSubreddit(name, description) {
+async function addSubreddit(name, description) {
 
 }
 
-export { getSubredditsList, getSubredditInfo, createSubreddit }
+export { getAllSubreddits, getSubredditInfo, addSubreddit }

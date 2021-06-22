@@ -32,9 +32,6 @@ function App() {
     // add localstorage setitem
   }
 
-  console.log("App logged in ? -> ", userSignedIn)
-  console.log("context meme -> ", LoggedInContext)
-
   return (
     <LoggedInContext.Provider value={userSignedIn}>
       <Router>

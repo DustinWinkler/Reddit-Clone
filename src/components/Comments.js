@@ -4,6 +4,7 @@ import { getTopLevelCommentIDs, getChildComments, getComment } from "../API/comm
 import { getPost } from "../API/posts"
 import { getSubredditInfo } from "../API/subreddits"
 import Comment from './Comment'
+import LoadingIcon from './LoadingIcon'
 import Post from './Post'
 
 //need form at the top 
@@ -85,7 +86,7 @@ function Comments(props) {
       </div>
 
       <div>
-        {loadingComments ? "Loading Comments" : 
+        {loadingComments ? <LoadingIcon/> : 
         comments.map(comment => {
           return <Comment loggedIn={props.loggedIn} comment={comment} />
         })}

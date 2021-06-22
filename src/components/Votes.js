@@ -37,7 +37,6 @@ function Votes(props) {
 
   function getUpdatedUser() {
     setUserInfo(JSON.parse(localStorage.getItem("userInfo")))
-    console.log("votes comp, user -> ", userInfo)
   }
 
   function setUpdatedUser(user) {
@@ -67,7 +66,6 @@ function Votes(props) {
         let index = user.upvotedIDs.indexOf(props.content.id)
         user.upvotedIDs.splice(index, 1)
         setUserInfo(user)
-        console.log("just before update -> user: ", user, "username: ", username)
         updateUser(username, user)
         setHasUpvoted(false)
         setNetVotes(prev => prev - 1)

@@ -53,14 +53,10 @@ async function usernamePasswordExists(username, password) {
   } else {
     return false
   }
-  // test what user returns in console when doc doesnt exist
-
 }
 
 async function updateUser(username, user) {
-  console.log("username -> ", username, "user -> ", user)
   db.collection("users").doc(username).update(user)
-
 }
 
 export { getUserInfo, createUser, usernamePasswordExists, userExists, updateUser }

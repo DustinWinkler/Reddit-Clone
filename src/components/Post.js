@@ -5,7 +5,6 @@ import {LoggedInContext} from '../App'
 
 function Post(props) {
   const loggedIn = useContext(LoggedInContext)
-  console.log("post useContext loggedIn status -> ", loggedIn)
 
   const history = useHistory()
 
