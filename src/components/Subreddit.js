@@ -33,7 +33,8 @@ function Subreddit() {
   }
 
   function handleSubmit(e) {
-
+    e.preventDefault()
+    console.log("new post for sub -> ", e)
   }
 
   let newPostForm = (
