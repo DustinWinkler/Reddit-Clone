@@ -68,7 +68,7 @@ function Subreddit() {
     <div className={(showForm ? "mt-64 " : "") + "transition-all duration-500 w-3/5 mx-auto"}>
       {loadingPosts ? <LoadingIcon/> : 
       posts.map(post => {
-        return <Post post={post} comments="disabled" />
+        return <Post post={post} />
       })}
     </div>
 

@@ -33,13 +33,13 @@ function Comment(props) {
     
   }, [hasChildren])
 
-  let commentForm = (
-    <div>
-      <form>
+  const commentForm = (
+    <div className={(showForm ? "max-h-0 " : "h-max max-h-32 ") + "ml-2 overflow-hidden transition-all duration-1000"}>
+      <form onSubmit={handleSubmit}>
         <label>
-          <textarea className="block p-1 border border-gray-500 rounded w-4/5" placeholder="Comment." rows="3" onChange={handleChange} />
+          <textarea className="block py-1 px-2 border border-gray-300 rounded-lg w-4/5" placeholder="Comment." rows="3" onChange={handleChange} />
         </label>
-        <input className="p-1" type="submit" />
+        <input className="w-max my-1 py-0 px-3 border-2 border-blue-500 rounded-lg hover:bg-blue-500 hover:text-white hover:border-gray-600 cursor-pointer" type="submit" value="Reply" />
       </form>
     </div>
   )
@@ -65,7 +65,7 @@ function Comment(props) {
         <p className="text-xs text-gray-600 curesor-pointer hover:underline">{props.comment.author}</p>
         <p>{props.comment.content}</p>
         <Votes type="comment" loggedIn={loggedIn} replyFunc={toggleForm} content={props.comment} /> 
-        {showForm ? commentForm : ""}
+        {commentForm}
       </div>
       
       <div className="ml-2 border-l-2 pl-2">
