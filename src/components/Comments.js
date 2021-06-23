@@ -81,7 +81,7 @@ function Comments(props) {
       <div className="flex w-3/5">
         <form className="w-full mr-2" onSubmit={handleSubmit}>
           <textarea className="w-full p-3 border rounded-xl" rows="4" placeholder="Write your comment." />
-          <input className="text-center border-2 border-blue-500 w-36 rounded-lg" value="Post Comment" type="submit" /> 
+          <input className="w-max mx-auto py-0 px-3 border-2 border-blue-500 rounded-lg hover:bg-blue-500 hover:text-white hover:border-gray-600 cursor-pointer" value="Post Comment" type="submit" /> 
         </form>
       </div>
 

@@ -13,7 +13,7 @@ function Post(props) {
   }
 
   return (
-    <div className="p-2 border border-gray-200 hover:border-gray-400 bg-white rounded shadow-lg">
+    <div className="p-2 my-3 border border-gray-200 hover:border-gray-400 bg-white rounded shadow-lg">
       <p>Posted by <span className="text-blue-400">{props.post.author}</span>  in r/{props.post.subreddit}</p>
       <h1 className="text-lg">{props.post.title}</h1>
       <p>{props.post.content}</p>
