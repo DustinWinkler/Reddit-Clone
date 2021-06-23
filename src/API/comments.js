@@ -1,3 +1,4 @@
+import { comment } from 'postcss'
 import {db} from '../firebase'
 import {getPost} from "./posts"
 
@@ -69,7 +70,37 @@ async function replyToComment(content, idToReplyTo) {
 }
 
 async function getTotalComments(postID) {
-  // comments.length and then recursively check for children on those
+
+  async function checkChildren(commentID) {
+    let children = []
+    let bool = await hasChildren(commentID)
+    if (bool) {
+      await getChildComments(commentID).then(comments => {
+        comments.forEach(comment => {
+          children.push(comment)
+          checkChildren(comment)
+        })
+      })
+    
+      commentCount += children.length
+    }
+  }
+
+  let post = {}
+  let commentCount = 0
+  await getPost(postID).then(response => {
+    post = response
+  })
+
+  console.log("post comments -> ", post.comments)
+
+  for (const commentID of post.comments) {
+    commentCount += 1
+    await checkChildren(commentID)
+  }
+
+  return commentCount
+
 }
 
-export { getComment, getTopLevelCommentIDs, getChildComments, hasChildren, incrementKarma, decrementKarma }
+export { getComment, getTopLevelCommentIDs, getChildComments, hasChildren, incrementKarma, decrementKarma, createComment, replyToComment, getTotalComments }

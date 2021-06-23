@@ -88,7 +88,7 @@ function Comments(props) {
       <div>
         {loadingComments ? <LoadingIcon/> : 
         comments.map(comment => {
-          return <Comment loggedIn={props.loggedIn} comment={comment} />
+          return <Comment loggedIn={props.loggedIn} key={comment.id} comment={comment} />
         })}
       </div>
 

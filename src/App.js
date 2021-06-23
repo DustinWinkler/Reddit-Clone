@@ -6,6 +6,7 @@ import Posts  from "./components/Posts"
 import Subreddits from './components/Subreddits'
 import Subreddit from './components/Subreddit'
 import { getUserInfo } from "./API/users"
+import { getTotalComments } from "./API/comments"
 
 export const LoggedInContext = createContext()
 
@@ -13,7 +14,7 @@ function App() {
   const [userSignedIn, setUserSignedIn] = useState(false)
 
   useEffect(() => {
-    // use firestore sign up stuff/localstorage stuff
+    // check if signed in, if true, set the state to be so
     if(localStorage.getItem("curr_user") !== null) {
       signIn(localStorage.getItem("curr_user"))
     }
@@ -22,14 +23,12 @@ function App() {
   function signOut() {
     setUserSignedIn(false)
     localStorage.removeItem("curr_user")
-    // add localstorage clear
   }
 
   function signIn(username) {
     localStorage.setItem('curr_user', username)
     getUserInfo(username).then(user => localStorage.setItem("userInfo", JSON.stringify(user)))
     setUserSignedIn(true)
-    // add localstorage setitem
   }
 
   return (

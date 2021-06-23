@@ -48,7 +48,7 @@ async function decrementKarma(postID, num) {
 }
 
 function addPost(post) {
-  
+
 }
 
-export { getPosts, getPost, incrementKarma, decrementKarma }
+export { getPosts, getPost, incrementKarma, decrementKarma, addPost }
