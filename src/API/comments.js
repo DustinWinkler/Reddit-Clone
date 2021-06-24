@@ -8,7 +8,6 @@ async function getComment(commentID) {
 
   await db.collection("comments").doc(commentID).get().then(doc => {
     comment = doc.data()
-    console.log("comment return -> ", comment, "comment id -> ", commentID)
     comment['id'] = doc.id
   })
   return comment
@@ -89,20 +88,22 @@ async function replyToComment(comment, idToReplyTo) {
   return newID  
 }
 
+// use new Promise to force waiting for all children
 async function getTotalComments(postID) {
 
   async function checkChildren(commentID) {
     let children = []
     let bool = await hasChildren(commentID)
     if (bool) {
-      await getChildComments(commentID).then(comments => {
-        comments.forEach(comment => {
+      await getChildComments(commentID).then(async function (comments) {
+        for (const comment of comments) {
           children.push(comment)
-          checkChildren(comment)
-        })
+          await checkChildren(comment)
+        }
       })
     
       commentCount += children.length
+      console.log("commentCOunt -> ", commentCount)
     }
   }
 

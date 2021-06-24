@@ -76,7 +76,7 @@ function Comment(props) {
   }
 
   return (
-    <div className="my-2 p-2 border bg-white">
+    <div className="my-2 p-2 border rounded-lg bg-white hover:border-gray-600">
       <div>
         <p className="text-xs text-gray-600 cursor-pointer active:text-black hover:underline">{props.comment.author}</p>
         <p>{props.comment.content}</p>
