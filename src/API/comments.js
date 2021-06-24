@@ -62,10 +62,8 @@ async function decrementKarma(commentID, num) {
 }
 
 // for two below -> to get doc id for purposes of appending it to posts or other comments do -> let newComment = db.collection("comments").doc(), then you can do newComment.id and then newComment.set(data)
-async function createComment(comment, postID) {
-  console.log("comment in createComment -> ", comment, "postID in createComment -> ", postID)
-
-  await db.collection("comments").add(comment).then(docRef => {
+function createComment(comment, postID) {
+  db.collection("comments").add(comment).then(docRef => {
     appendComment(postID, docRef.id)
   })
 }
@@ -103,7 +101,6 @@ async function getTotalComments(postID) {
       })
     
       commentCount += children.length
-      console.log("commentCOunt -> ", commentCount)
     }
   }
 

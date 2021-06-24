@@ -1,17 +1,24 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useParams } from "react-router-dom"
-import {getPosts} from '../API/posts'
+import {addPost, getPosts} from '../API/posts'
 import Post from './Post'
 import { getSubredditInfo } from '../API/subreddits'
 import ToggleFormButton from './ToggleFormButton'
 import LoadingIcon from './LoadingIcon'
+import Posts from './Posts'
+import { LoggedInContext } from '../App'
 
 function Subreddit() {
-  const [subreddit, setSubreddit] = useState(useParams().subreddit)
   const [subInfo, setSubInfo] = useState('')
   const [showForm, setShowForm] = useState(false)
   const [posts, setPosts] = useState([])
   const [loadingPosts, setLoadingPosts] = useState(true)
+  const [formTitle, setFormTitle] = useState('')
+  const [formContent, setFormContent] = useState('')
+
+  const subreddit = useParams().subreddit
+
+  const loggedIn = useContext(LoggedInContext)
 
   useEffect(() => {
     getPosts(subreddit).then(posts => {
@@ -28,25 +35,51 @@ function Subreddit() {
     setShowForm(!showForm)
   }
 
-  function addPostToState(post) {
+  function handleTitleChange(e) {
+    setFormTitle(e.target.value)
+  }
 
+  function handleContentChange(e) {
+    setFormContent(e.target.value)
   }
 
   function handleSubmit(e) {
     e.preventDefault()
-    console.log("new post for sub -> ", e)
+
+    if (!loggedIn) {
+      alert("You must be logged in to comment.")
+      return
+    }
+
+    let post = {
+      author: localStorage.getItem("curr_user"),
+      comments: [],
+      content: formContent,
+      subreddit: subreddit,
+      title: formTitle,
+      votes: 0
+    }
+
+    addPost(post).then(id => {
+      post["id"] = id
+      let oldPosts = posts
+      oldPosts.push(post)
+      setPosts(oldPosts)
+      setShowForm(false)
+    })   
+
   }
 
-  let newPostForm = (
+  const newPostForm = (
     <div className={(showForm ? "opacity-100 visible " : "opacity-0 invisible ") + "transition-opacity duration-500 w-96 -ml-48 inset-x-1/2 text-center absolute"}>
-      <form className="flex flex-col flex-wrap" onSumbit={handleSubmit}>
+      <form className="flex flex-col flex-wrap" >
         <label className="">
-          <input className="border my-1 w-full rounded-lg p-2" placeholder="Title" />
+          <input className="border my-1 w-full rounded-lg p-2" value={formTitle} onChange={handleTitleChange} placeholder="Title" />
         </label>
         <label className="">
-          <textarea className="border my-1 w-full rounded-lg p-2" placeholder="Content" rows="5" />
+          <textarea className="border my-1 w-full rounded-lg p-2" value={formContent} onChange={handleContentChange} placeholder="Content" rows="5" />
         </label>
-        <input className="w-3/5 mx-auto p-1 border-2 border-blue-500 rounded-xl hover:bg-blue-500 hover:text-white hover:border-gray-600 cursor-pointer" type="submit" value="Submit" />
+        <button className="w-3/5 mx-auto p-1 border-2 border-blue-500 rounded-xl hover:bg-blue-500 hover:text-white hover:border-gray-600 cursor-pointer text-center bg-gray-200" onClick={handleSubmit} >Submit</button>
       </form>
     </div>
   )
@@ -65,10 +98,9 @@ function Subreddit() {
 
       {newPostForm}
 
-    <div className={(showForm ? "mt-64 " : "") + "transition-all duration-500 w-3/5 mx-auto"}>
+    <div className={(showForm ? "mt-64 " : "") + "transition-all duration-500 mx-auto w-3/5"}>
       {loadingPosts ? <LoadingIcon/> : 
-      posts.map(post => {
-        return <Post post={post} />
+      posts.map(post => {return (<Post key={post.id} post={post} />)
       })}
     </div>
 

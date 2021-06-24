@@ -24,10 +24,18 @@ async function getSubredditInfo(subredditName) {
   return content
 }
 
-async function addSubreddit(name, description) {
-  db.collection("subreddits").doc(name).set({
+async function addSubreddit(title, description) {
+  db.collection("subreddits").doc(title).set({
     description: description
   })
 }
 
-export { getAllSubreddits, getSubredditInfo, addSubreddit }
+async function subExists(title) {
+  let bool = false
+  await db.collection("subreddits").doc(title).get().then(doc => {
+    if (doc.exists) {bool = true}
+  })
+  return bool
+}
+
+export { getAllSubreddits, getSubredditInfo, addSubreddit, subExists }

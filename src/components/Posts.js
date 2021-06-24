@@ -18,12 +18,15 @@ function Posts(props) {
 			setSubreddit('all')
 		} else {
 			setSubreddit(props.subreddit)
-		}	
+		}
+	}, [])
+
+	useEffect(() => {
 		getPosts(subreddit).then(val => {
 			setPosts(val)
 			setTimeout(setLoadingPosts(false), 500)
 		})
-	}, [])
+	}, [subreddit])
 
   return (
     <div className="mt-4 w-3/5 mx-auto striped">

@@ -14,13 +14,14 @@ import Post from './Post'
 function Comments(props) {
   const [post, setPost] = useState({})
   const [loadingPost, setLoadingPost] = useState(true)
-  const [postID, setPostID] = useState(useParams().postid)
-  const [subreddit, setSubreddit] = useState(useParams().subreddit)
   const [subInfo, setSubInfo] = useState('')
   const [loadingComments, setLoadingComments] = useState(true)
   const [commentIDs, setCommentIDs] = useState([])
   const [comments, setComments] = useState([])
   const [formContent, setFormContent] = useState('')
+
+  const postID = useParams().postid
+  const subreddit = useParams().subreddit
 
   const loggedIn = useContext(LoggedInContext)
 
@@ -47,7 +48,6 @@ function Comments(props) {
   // when we get ids populate comments state with getComment for each id
   useEffect(() => {
     let promises = []
-    let arr = []
 
     commentIDs.forEach(id => {
       promises.push(new Promise(resolve => resolve(getComment(id))))

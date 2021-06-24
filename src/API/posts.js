@@ -48,8 +48,12 @@ async function decrementKarma(postID, num) {
   })
 }
 
-function addPost(post) {
-
+async function addPost(post) {
+  let newID
+  await db.collection("posts").add(post).then(docRef => {
+    newID = docRef.id
+  })
+  return newID
 }
 
 function appendComment(postID, commentID) {
