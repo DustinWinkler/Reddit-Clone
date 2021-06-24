@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { useParams } from "react-router-dom"
-import { getTopLevelCommentIDs, getChildComments, getComment } from "../API/comments"
+import {LoggedInContext} from "../App"
+import { getTopLevelCommentIDs, getChildComments, getComment, createComment } from "../API/comments"
 import { getPost } from "../API/posts"
 import { getSubredditInfo } from "../API/subreddits"
 import Comment from './Comment'
@@ -19,6 +20,10 @@ function Comments(props) {
   const [loadingComments, setLoadingComments] = useState(true)
   const [commentIDs, setCommentIDs] = useState([])
   const [comments, setComments] = useState([])
+  const [formContent, setFormContent] = useState('')
+
+  const loggedIn = useContext(LoggedInContext)
+
 
   useEffect(() => {
     getPost(postID).then(post => {
@@ -54,8 +59,33 @@ function Comments(props) {
     })
   }, [commentIDs])
 
+  function handleChange(e) {
+    setFormContent(e.target.value)
+  }
+
   function handleSubmit(e) {
     e.preventDefault()
+
+    if (!loggedIn) {
+      alert("You must be logged in to comment.")
+      return
+    }
+
+    setFormContent('')
+
+    let comment = {
+      content: formContent,
+      comments: [],
+      author: localStorage.getItem("curr_user"),
+      votes: 0
+    }
+
+    let oldComments = comments
+    oldComments.push(comment)
+    setComments(oldComments)
+
+    createComment(comment, postID)
+
     // add new Comment object to children
     
     // send identical object to DB
@@ -80,7 +110,7 @@ function Comments(props) {
 
       <div className="flex w-3/5">
         <form className="w-full mr-2" onSubmit={handleSubmit}>
-          <textarea className="w-full p-3 border rounded-xl" rows="4" placeholder="Write your comment." />
+          <textarea className="w-full p-3 border rounded-xl" rows="4" placeholder="Write your comment." value={formContent} onChange={handleChange} />
           <input className="w-max mx-auto py-0 px-3 border-2 border-blue-500 rounded-lg hover:bg-blue-500 hover:text-white hover:border-gray-600 cursor-pointer" value="Post Comment" type="submit" /> 
         </form>
       </div>

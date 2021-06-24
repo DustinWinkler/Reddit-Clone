@@ -1,12 +1,14 @@
 import { comment } from 'postcss'
+import firebase from "firebase/app"
 import {db} from '../firebase'
-import {getPost} from "./posts"
+import {appendComment, getPost} from "./posts"
 
 async function getComment(commentID) {
   let comment = {}
 
   await db.collection("comments").doc(commentID).get().then(doc => {
     comment = doc.data()
+    console.log("comment return -> ", comment, "comment id -> ", commentID)
     comment['id'] = doc.id
   })
   return comment
@@ -61,12 +63,30 @@ async function decrementKarma(commentID, num) {
 }
 
 // for two below -> to get doc id for purposes of appending it to posts or other comments do -> let newComment = db.collection("comments").doc(), then you can do newComment.id and then newComment.set(data)
-async function createComment(content) {
+async function createComment(comment, postID) {
+  console.log("comment in createComment -> ", comment, "postID in createComment -> ", postID)
 
+  await db.collection("comments").add(comment).then(docRef => {
+    appendComment(postID, docRef.id)
+  })
 }
 
-async function replyToComment(content, idToReplyTo) {
+async function replyToComment(comment, idToReplyTo) {
   // call create comment then append its id to reply
+  let newID
+  await db.collection("comments").add({
+    content: comment.content,
+    author: comment.author,
+    comments: [],
+    votes: 0
+  }).then(docRef => {
+    newID = docRef.id
+    db.collection("comments").doc(idToReplyTo).update({
+      comments: firebase.firestore.FieldValue.arrayUnion(newID)
+    })
+  })
+
+  return newID  
 }
 
 async function getTotalComments(postID) {
@@ -91,8 +111,6 @@ async function getTotalComments(postID) {
   await getPost(postID).then(response => {
     post = response
   })
-
-  console.log("post comments -> ", post.comments)
 
   for (const commentID of post.comments) {
     commentCount += 1

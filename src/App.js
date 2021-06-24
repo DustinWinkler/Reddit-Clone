@@ -6,7 +6,7 @@ import Posts  from "./components/Posts"
 import Subreddits from './components/Subreddits'
 import Subreddit from './components/Subreddit'
 import { getUserInfo } from "./API/users"
-import { getTotalComments } from "./API/comments"
+import { replyToComment } from './API/comments'
 
 export const LoggedInContext = createContext()
 

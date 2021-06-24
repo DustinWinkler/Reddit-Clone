@@ -1,4 +1,5 @@
 import {db} from "../firebase"
+import firebase from "firebase/app"
 
 async function getPosts(subreddit) {
   let posts = []
@@ -51,4 +52,10 @@ function addPost(post) {
 
 }
 
-export { getPosts, getPost, incrementKarma, decrementKarma, addPost }
+function appendComment(postID, commentID) {
+  db.collection("posts").doc(postID).update({
+    comments: firebase.firestore.FieldValue.arrayUnion(commentID)
+  })
+}
+
+export { getPosts, getPost, incrementKarma, decrementKarma, addPost, appendComment }

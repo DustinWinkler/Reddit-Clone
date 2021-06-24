@@ -25,7 +25,9 @@ async function getSubredditInfo(subredditName) {
 }
 
 async function addSubreddit(name, description) {
-
+  db.collection("subreddits").doc(name).set({
+    description: description
+  })
 }
 
 export { getAllSubreddits, getSubredditInfo, addSubreddit }

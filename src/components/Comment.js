@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { getChildComments, getComment } from '../API/comments'
+import { getChildComments, getComment, replyToComment } from '../API/comments'
 import {LoggedInContext} from "../App"
 import Votes from './Votes'
 
@@ -48,11 +48,27 @@ function Comment(props) {
     setFormContent(e.target.value)
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
-    // add new Comment object to children
-    
-    // send identical object to DB
+    if (!loggedIn) {
+      alert("You must be logged in to comment.")
+      return
+    }
+
+    let comment = {
+      content: formContent,
+      comments: [],
+      author: localStorage.getItem("curr_user"),
+      votes: 0
+    }
+
+    let newCommentID
+    await replyToComment(comment, props.comment.id).then(id => {newCommentID = id})
+    comment["id"] = newCommentID
+    let children = childComments
+    children.push(comment)
+    setChildComments(children)
+    setShowForm(false)
   }
 
   function toggleForm() {
@@ -70,7 +86,7 @@ function Comment(props) {
       
       <div className="ml-2 border-l-2 pl-2">
         
-        {hasChildren ? childComments.map(child => {
+        {childComments.length > 0 ? childComments.map(child => {
           return <Comment loggedIn={loggedIn} key={child.id} comment={child} />
         }) : ""}
       </div>
