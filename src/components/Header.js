@@ -16,7 +16,7 @@ function Header(props) {
 
   useEffect(() => {
     window.addEventListener('click', (e)=>{
-      if (e.target.id === 'signin-form' || e.target.id === 'signup-form') {
+      if (e.target.id === 'form-bg') {
         setSigningUp(false)
         setSigningIn(false)
       }
@@ -39,22 +39,27 @@ function Header(props) {
         alert("That username is taken")
       } else {
         createUser(username, password)
+        setSigningUp(false)
+        props.signInFunc(username)
+        window.location.reload()
       }
     })
   }
 
   const signUpForm = (
-    <div id="signup-form" className="fixed min-h-screen h-full w-screen bg-gray-300 opacity-90 z-50 top-0">
-      <div className="p-4 my-12 bg-blue-300 mx-auto max-w-80 w-2/5 border-2 rounded-xl border-black">
-      <h1 className="mb-2">Sign Up</h1>
+    <div id="signup-form" className="absolute min-h-screen h-full w-screen top-0">
+      <div className="relative z-20 p-4 my-12 bg-white mx-auto max-w-80 w-2/5 border-2 rounded-xl border-black opacity-100">
+      <h1 className="mb-2 text-2xl">Sign Up</h1>
         <form className="block" onSubmit={handleSignUp}>
           <label className="block">Username</label>
-          <input className="" value={username} onChange={handleUsernameChange} htmlFor="Username"></input>
+          <input className="border border-blue-600 rounded-lg p-1" value={username} onChange={handleUsernameChange} htmlFor="Username"></input>
           <label className="block">Password</label>
-          <input className="" value={password} onChange={handlePasswordChange} htmlFor="Password"></input>
+          <input className="border border-blue-600 rounded-lg p-1" value={password} onChange={handlePasswordChange} htmlFor="Password"></input>
           <input className="block text-center mx-auto my-2 border-2 border-blue-600 py-1 px-3 rounded-xl cursor-pointer hover:text-white hover:bg-blue-400 text-black bg-white" type="submit" value="Submit" />
         </form>
       </div>
+
+      <div id="form-bg" className="w-full h-full absolute z-10 inset-0 bg-gray-300 opacity-90"></div>
     </div>
   )
   
@@ -65,6 +70,7 @@ function Header(props) {
       if (val) {
         props.signInFunc(username)
         setSigningIn(false)
+        window.location.reload()
       } else {
         alert("Invalid credentials")
       }
@@ -72,22 +78,24 @@ function Header(props) {
   }
   
   const signInForm = (
-    <div id="signin-form" className="fixed min-h-screen h-full w-screen bg-gray-300 opacity-90 z-50 top-0">
-      <div className="p-4 my-12 bg-blue-300 mx-auto max-w-80 w-2/5 border-2 rounded-xl border-black">
-      <h1 className="mb-2">Sign In</h1>
+    <div id="signin-form" className="absolute min-h-screen h-full w-screen top-0">
+      <div className="relative z-20 p-4 my-12 bg-white mx-auto max-w-80 w-2/5 border-2 rounded-xl border-black opacity-100">
+      <h1 className="mb-2 text-2xl">Sign In</h1>
         <form className="block" onSubmit={handleSignIn}>
           <label className="block">Username</label>
-          <input className="" value={username} onChange={handleUsernameChange} for="Username"></input>
+          <input className="border border-blue-600 rounded-lg p-1" value={username} onChange={handleUsernameChange} for="Username"></input>
           <label className="block">Password</label>
-          <input className="" value={password} onChange={handlePasswordChange} for="Password"></input>
+          <input className="border border-blue-600 rounded-lg p-1" value={password} onChange={handlePasswordChange} for="Password"></input>
           <input className="block text-center mx-auto my-2 border-2 border-blue-600 py-1 px-3 rounded-xl cursor-pointer hover:text-white hover:bg-blue-400 text-black bg-white" type="submit" value="Submit" />
         </form>
       </div>
+
+      <div id="form-bg" className="w-full h-full absolute z-10 inset-0 bg-gray-300 opacity-90"></div>
     </div>
   )
 
   return (
-    <div className="w-full bg-white">
+    <div className="relative w-full bg-white z-50">
       <div className="border-b-2 border-black w-3/5 mx-auto text-center flex justify-around filter drop-shadow-lg">
       <div className="w-1/3 mt-1">
         <NavLink to="/subreddits" activeClassName="text-red-400" className="hover:text-blue-600">Subreddits</NavLink>
@@ -97,11 +105,11 @@ function Header(props) {
       <NavLink exact to="/" activeClassName="text-red-400" className="text-2xl w-1/3 cursor-pointer hover:text-blue-600">Reddit</NavLink>
 
       {loggedIn ? 
-      <div className="flex justify-around w-1/3">
+      <div className="flex justify-around w-1/3 opacity-100">
         <span className="m-auto">Signed in as {localStorage.getItem("curr_user")}</span>
         <button onClick={()=>{props.signOutFunc()}} className="w-1/3 hover:text-blue-600">Sign Out</button>
       </div> :
-      <div className="flex justify-around w-1/3">
+      <div className="flex justify-around w-1/3 opacity-100">
         <button onClick={()=>{setSigningIn(true)}} className="hover:text-blue-600">Sign In</button>
         <button onClick={()=>{setSigningUp(true)}} className="hover:text-blue-600">Sign Up</button>
       </div>

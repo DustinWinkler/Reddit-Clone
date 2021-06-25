@@ -29,7 +29,7 @@ function Posts(props) {
 	}, [subreddit])
 
   return (
-    <div className="mt-4 w-3/5 mx-auto striped">
+    <div className="relative z-0 mt-4 w-3/5 mx-auto striped">
       { loadingPosts ? <LoadingIcon/> :
 			posts.map(post => {return (<Post key={post.id} post={post} />)
       })}

@@ -5,8 +5,8 @@ import Header from './components/Header'
 import Posts  from "./components/Posts"
 import Subreddits from './components/Subreddits'
 import Subreddit from './components/Subreddit'
+import UserProfile from './components/UserProfile'
 import { getUserInfo } from "./API/users"
-import { replyToComment } from './API/comments'
 
 export const LoggedInContext = createContext()
 
@@ -34,15 +34,15 @@ function App() {
   return (
     <LoggedInContext.Provider value={userSignedIn}>
       <Router>
-        <div className="">
+        <div>
         <Header signOutFunc={signOut} signInFunc={signIn} />
 
         <Switch>
           <Route exact path='/' component={Posts} />
           <Route path='/subreddits' component={Subreddits} />
+          <Route path='/users/:username' component={UserProfile} />
           <Route path='/:subreddit/comments/:postid' component={Comments} />
           <Route exact path='/:subreddit' component={Subreddit} />
-          
         </Switch>
         
       </div>
