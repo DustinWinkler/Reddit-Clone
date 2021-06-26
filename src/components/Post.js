@@ -57,7 +57,7 @@ function Post(props) {
         <FontAwesomeIcon icon={faTrash} /> 
       </div> : ""}
 
-      <p>{"Posted by "} 
+      <p>{"Posted by "}
       <Link to={"/users/" + props.post.author}>
         <span className="text-blue-400 hover:underline">{props.post.author}</span>
       </Link>  in r/{props.post.subreddit}</p>

@@ -23,6 +23,7 @@ function App() {
   function signOut() {
     setUserSignedIn(false)
     localStorage.removeItem("curr_user")
+    window.location.reload()
   }
 
   function signIn(username) {
