@@ -119,4 +119,11 @@ async function getTotalComments(postID) {
 
 }
 
-export { getComment, getTopLevelCommentIDs, getChildComments, hasChildren, incrementKarma, decrementKarma, createComment, replyToComment, getTotalComments }
+function deleteComment(commentID) {
+  db.collection("comments").doc(commentID).update({
+    votes: "disabled",
+    content: "[deleted]"
+  })
+}
+
+export { getComment, getTopLevelCommentIDs, getChildComments, hasChildren, incrementKarma, decrementKarma, createComment, replyToComment, getTotalComments, deleteComment }

@@ -2,12 +2,15 @@ import React, { useState, useEffect, useContext } from 'react'
 import { getChildComments, getComment, replyToComment } from '../API/comments'
 import {LoggedInContext} from "../App"
 import Votes from './Votes'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTrash } from '@fortawesome/free-solid-svg-icons'
 
 function Comment(props) {
   const [hasChildren, setHasChildren] = useState(false)
   const [childComments, setChildComments] = useState([])
   const [showForm, setShowForm] = useState(false)
   const [formContent, setFormContent] = useState('')
+  const [canDelete, setCanDelete] = useState(false)
 
   const loggedIn = useContext(LoggedInContext)
   
@@ -32,6 +35,27 @@ function Comment(props) {
     }
     
   }, [hasChildren])
+
+  // check if user is admin or original author
+  useEffect(() => {
+    let username = localStorage.getItem("curr_user")
+    let author = props.comment.author
+
+    if (username === null) {return}
+
+    if (username === author) {
+      setCanDelete(true)
+    }
+
+    if (username.includes("admin")) {
+      setCanDelete(true)
+    }
+
+    console.log("username in canDelete -> ", username)
+    console.log("author in canDelete -> ", author)
+    console.log("username === author ? ", username === author)
+
+  }, [])
 
   const commentForm = (
     <div className={(showForm ? "h-max max-h-32 " : "max-h-0 ") + "ml-2 overflow-hidden transition-all duration-500"}>
@@ -75,8 +99,15 @@ function Comment(props) {
     setShowForm(!showForm)
   }
 
+  function compDeleteComment() {
+
+  }
+
   return (
-    <div className="my-2 p-2 border rounded-lg bg-white hover:border-gray-600">
+    <div className="relative my-2 p-2 border rounded-lg bg-white hover:border-gray-600">
+      {canDelete ? <div onClick={compDeleteComment} className="absolute top-2 right-5 fill-current text-red-600 cursor-pointer"> 
+        <FontAwesomeIcon icon={faTrash} /> 
+      </div> : ""}
       <div>
         <p className="text-xs text-gray-600 cursor-pointer active:text-black hover:underline">{props.comment.author}</p>
         <p>{props.comment.content}</p>

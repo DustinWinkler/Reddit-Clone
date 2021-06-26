@@ -62,4 +62,8 @@ function appendComment(postID, commentID) {
   })
 }
 
-export { getPosts, getPost, incrementKarma, decrementKarma, addPost, appendComment }
+function deletePost(postID) {
+  db.collection("posts").doc(postID).delete()
+}
+
+export { getPosts, getPost, incrementKarma, decrementKarma, addPost, appendComment, deletePost }

@@ -5,6 +5,7 @@ import {LoggedInContext} from '../App'
 import { getTotalComments } from '../API/comments'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
+import { deletePost } from '../API/posts'
 
 function Post(props) {
   const [commentCount, setCommentCount] = useState(0)
@@ -44,16 +45,17 @@ function Post(props) {
     history.push('/' + props.post.subreddit + '/comments/' + props.post.id);
   }
 
-  function deletePost() {
-    if (window.confirm("meme?")) {
-      console.log("meme")
+  function compDeletePost() {
+    if (window.confirm("Are you sure you would like to delete this post?")) {
+      deletePost(props.post.id)
+      console.log("post deleted")
     }
   }
 
 
   return (
     <div className="relative z-0 p-2 my-3 border border-gray-200 hover:border-gray-400 bg-white rounded shadow-lg">
-      {canDelete ? <div onClick={deletePost} className="absolute top-2 right-5 fill-current text-red-600 cursor-pointer"> 
+      {canDelete ? <div onClick={compDeletePost} className="absolute top-2 right-5 fill-current text-red-600 cursor-pointer"> 
         <FontAwesomeIcon icon={faTrash} /> 
       </div> : ""}
 

@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react'
+import React, {useState, useEffect, useContext} from 'react'
 import ToggleFormButton from './ToggleFormButton'
 import { LoggedInContext } from '../App'
 import {addPost} from "../API/posts"
@@ -10,11 +10,39 @@ import {addPost} from "../API/posts"
 
 function PostForm(props) {
   const [showForm, setShowForm] = useState(false)
-  const [formType, setFormType] = useState("text")
+  const [formType, setFormType] = useState("Text")
+  const [formInput, setFormInput] = useState('')
   const [formTitle, setFormTitle] = useState('')
   const [formContent, setFormContent] = useState('')
 
   const loggedIn = useContext(LoggedInContext)
+
+  useEffect(() => {
+    if (formType === 'Text') {setFormInput(textInput)}
+    else if (formType === 'Video' || formType === 'Image') {setFormInput(uploadInput)}
+    else if (formType === 'Link') {setFormInput(linkInput)}
+  }, [formType])
+
+  const uploadInput = (
+    <label>
+      upload Input
+      <input type="file" />
+    </label>
+  )
+
+  const linkInput = (
+    <label>
+      link input
+      <input type="text" placeholder="Video or Image Link" className="border my-1 w-full rounded-lg p-2" />
+    </label>
+  )
+
+  const textInput = (
+    <label className="">
+      text input
+      <textarea className="border my-1 w-full rounded-lg p-2" value={formContent} onChange={handleContentChange} placeholder="Content" rows="5" />
+    </label>
+  )
 
   function switchType(type) {
     setFormType(type)
@@ -66,10 +94,10 @@ function PostForm(props) {
         
       <p>{formType}</p>
 
-      <div className="flex w-full justify-around">
-        <button className={buttonStyles} onClick={()=>{switchType("text")}}>Text</button>
-        <button className={buttonStyles} onClick={()=>{switchType("image")}}>Image</button>
-        <button className={buttonStyles} onClick={()=>{switchType("video")}}>Video</button>
+      <div className="flex w-full justify-around mb-2">
+        <button className={buttonStyles} onClick={()=>{switchType("Text")}}>Text</button>
+        <button className={buttonStyles} onClick={()=>{switchType("Image")}}>Image</button>
+        <button className={buttonStyles} onClick={()=>{switchType("Video")}}>Video</button>
         <button className={buttonStyles} onClick={()=>{switchType("Link")}}>Link</button>
       </div>
 
@@ -77,9 +105,9 @@ function PostForm(props) {
           <label className="">
             <input className="border my-1 w-full rounded-lg p-2" value={formTitle} onChange={handleTitleChange} placeholder="Title" />
           </label>
-          <label className="">
-            <textarea className="border my-1 w-full rounded-lg p-2" value={formContent} onChange={handleContentChange} placeholder="Content" rows="5" />
-          </label>
+          
+          {formInput}
+
           <button className="w-3/5 mx-auto p-1 border-2 border-blue-500 rounded-xl hover:bg-blue-500 hover:text-white hover:border-gray-600 cursor-pointer text-center bg-gray-200" onClick={handleSubmit} >Submit</button>
         </form>
       </div>

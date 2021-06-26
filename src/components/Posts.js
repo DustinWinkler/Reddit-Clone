@@ -28,8 +28,16 @@ function Posts(props) {
 		})
 	}, [subreddit])
 
+	const rAllPostingDisclaimer = (
+		<p className="w-max mx-auto bg-white text-center -my-2 p-1 text-xs font-bold">
+			You can create your own posts by going to the subreddit you would like to post in.
+		</p>
+	)
+
   return (
     <div className="relative z-0 mt-4 w-3/5 mx-auto striped">
+			{subreddit === 'all' || '' ? rAllPostingDisclaimer : ''}
+
       { loadingPosts ? <LoadingIcon/> :
 			posts.map(post => {return (<Post key={post.id} post={post} />)
       })}
