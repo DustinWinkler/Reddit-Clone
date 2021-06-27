@@ -76,7 +76,7 @@ async function deletePost(postID) {
 }
 
 async function uploadFile(file) {
-  storage.ref().put(file).then(snapshot => {
+  storage.ref().child(file.name).put(file).then(snapshot => {
     console.log("uploaded file")
   })
 }

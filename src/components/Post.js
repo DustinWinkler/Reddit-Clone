@@ -5,7 +5,8 @@ import {LoggedInContext} from '../App'
 import { getTotalComments } from '../API/comments'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
-import { deletePost } from '../API/posts'
+import { deletePost, getFileUrl } from '../API/posts'
+import LoadingIcon from './LoadingIcon'
 
 function Post(props) {
   const [commentCount, setCommentCount] = useState(0)
@@ -34,12 +35,21 @@ function Post(props) {
   useEffect(() => {
     if (!props.comments === 'disabled') {
       getTotalComments(props.post.id).then(count => setCommentCount(count))
+      setLoadingContent(false)
     }
   }, [])
 
   // check content type, if file, get it and set loading false
   useEffect(() => {
-    
+    if (props.post.type === "Text") {
+      setContent(<p>{props.post.content}</p>)
+    } else if (props.post.type === "Image" || props.post.type === "Video") {
+      getFileUrl(props.post.fileUrl).then(url => {
+        setContent(<img className="max-w-xs max-h-xs" src={url} alt="user uploaded" />)
+        setLoadingContent(false)
+      }
+      )
+    }
   }, [])
 
   const loggedIn = useContext(LoggedInContext)
@@ -75,7 +85,7 @@ function Post(props) {
       </p>
 
       <h1 className="text-lg">{props.post.title}</h1>
-      <p>{props.post.content}</p>
+      {loadingContent ? <LoadingIcon /> : content}
       {props.comments === 'disabled' ? "" :
       <Link className="text-sm hover:underline hover:text-blue-500" to={"/" + props.post.subreddit + "/comments/" + props.post.id } >{commentCount} Comments</Link>}
       <Votes type="post" content={props.post} replyFunc={commentsLink} loggedIn={loggedIn} />

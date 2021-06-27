@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext} from 'react'
 import ToggleFormButton from './ToggleFormButton'
 import { LoggedInContext } from '../App'
-import {addPost} from "../API/posts"
+import {addPost, uploadFile} from "../API/posts"
 
 // change fields based on type props
 // need text type
@@ -90,6 +90,18 @@ function PostForm(props) {
       return
     }
 
+    if (formType === "Image" || formType === "Video") {
+      if (formFile === undefined || formTitle === "") {
+        alert("Make sure you have uploaded a file and added a title")
+        return
+      }
+    } else {
+      if (formContent === "" || formTitle === "") {
+        alert("Make sure you have add some content and added a title")
+        return
+      }
+    }
+
     let post = {
       author: localStorage.getItem("curr_user"),
       comments: [],
@@ -111,7 +123,8 @@ function PostForm(props) {
       setShowForm(false)
 
       if (formType === "Image" || formType === "Video") {
-
+        uploadFile(formFile)
+        // window.location.reload
       }
     })   
   }
@@ -122,7 +135,7 @@ function PostForm(props) {
     <div className="my-6 bg-white py-2 px-4 border rounded-lg w-max max-w-2xl mx-auto">
       <ToggleFormButton text="Create a Post" toggleForm={toggleForm} showForm={showForm} />
 
-      <div className={(showForm ? "h-auto max-h-96 " : "max-h-0 ") + "overflow-hidden transition-all duration-500 w-96 mx-auto text-center"}>
+      <div className={(showForm ? "h-auto max-h-96 " : "max-h-0 ") + "overflow-hidden transition-all duration-300 ease-in-out w-96 mx-auto text-center"}>
         
       <p className="text-xl font-bold p-1 rounded-lg">{formType}</p>
 
