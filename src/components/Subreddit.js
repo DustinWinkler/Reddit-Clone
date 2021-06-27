@@ -12,6 +12,7 @@ function Subreddit() {
   const [subInfo, setSubInfo] = useState('')
   const [posts, setPosts] = useState([])
   const [loadingPosts, setLoadingPosts] = useState(true)
+  const [postsContent, setPostsContent] = useState('')
 
   const subreddit = useParams().subreddit
 
@@ -26,10 +27,17 @@ function Subreddit() {
     })
   }, [])
 
+  useEffect(() => {
+    setPostsContent(posts.map(post => {return (<Post key={post.id} post={post} />)}))
+  }, [posts])
+
   function addPostToState(post) {
+    console.log("adding post to state")
+    console.log("addPostToState post obj -> ", post)
     let oldPosts = posts
     oldPosts.push(post)
     setPosts(oldPosts)
+    console.log("end of add post to state -> ", posts)
   }
 
   return (
@@ -46,9 +54,7 @@ function Subreddit() {
       <PostForm subreddit={subreddit} addPostToStateFunc={addPostToState} />
 
     <div className="transition-all duration-500 mx-auto w-3/5">
-      {loadingPosts ? <LoadingIcon/> : 
-      posts.map(post => {return (<Post key={post.id} post={post} />)
-      })}
+      {loadingPosts ? <LoadingIcon/> : postsContent}
     </div>
 
     </div>

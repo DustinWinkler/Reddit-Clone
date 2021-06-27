@@ -10,6 +10,8 @@ import { deletePost } from '../API/posts'
 function Post(props) {
   const [commentCount, setCommentCount] = useState(0)
   const [canDelete, setCanDelete] = useState(false)
+  const [content, setContent] = useState('')
+  const [loadingContent, setLoadingContent] = useState(true)
 
   // check canDelete status
   useEffect(() => {
@@ -26,15 +28,18 @@ function Post(props) {
       setCanDelete(true)
     }
 
-    console.log("username in canDelete -> ", username)
-    console.log("author in canDelete -> ", author)
-    console.log("username === author ? ", username === author)
-
   }, [])
 
   // get total comments for post preview i.e (4 comments)
   useEffect(() => {
-    getTotalComments(props.post.id).then(count => setCommentCount(count))
+    if (!props.comments === 'disabled') {
+      getTotalComments(props.post.id).then(count => setCommentCount(count))
+    }
+  }, [])
+
+  // check content type, if file, get it and set loading false
+  useEffect(() => {
+    
   }, [])
 
   const loggedIn = useContext(LoggedInContext)
@@ -49,6 +54,7 @@ function Post(props) {
     if (window.confirm("Are you sure you would like to delete this post?")) {
       deletePost(props.post.id)
       console.log("post deleted")
+      setTimeout(()=>{window.location.reload()}, 1000)
     }
   }
 
@@ -62,7 +68,11 @@ function Post(props) {
       <p>{"Posted by "}
       <Link to={"/users/" + props.post.author}>
         <span className="text-blue-400 hover:underline">{props.post.author}</span>
-      </Link>  in r/{props.post.subreddit}</p>
+      </Link>  {"in "}
+      <Link to={"/" + props.post.subreddit}>
+        <span className="text-blue-400 hover:underline">r/{props.post.subreddit}</span>
+      </Link>
+      </p>
 
       <h1 className="text-lg">{props.post.title}</h1>
       <p>{props.post.content}</p>

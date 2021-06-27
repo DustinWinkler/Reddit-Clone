@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { getChildComments, getComment, replyToComment } from '../API/comments'
+import { deleteComment, getChildComments, getComment, replyToComment } from '../API/comments'
 import {LoggedInContext} from "../App"
 import Votes from './Votes'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -14,7 +14,7 @@ function Comment(props) {
 
   const loggedIn = useContext(LoggedInContext)
   
-
+  
   // check for children
   useEffect(() => {
     if (props.comment.comments.length > 0) setHasChildren(true)
@@ -42,6 +42,8 @@ function Comment(props) {
     let author = props.comment.author
 
     if (username === null) {return}
+
+    if (props.comment.votes === 'disabled') {return}
 
     if (username === author) {
       setCanDelete(true)
@@ -100,7 +102,11 @@ function Comment(props) {
   }
 
   function compDeleteComment() {
-
+    if (window.confirm("Are you sure you would like to delete this comment?")) {
+      deleteComment(props.comment.id)
+      console.log("comment deleted")
+      window.location.reload()
+    }
   }
 
   return (
@@ -111,7 +117,7 @@ function Comment(props) {
       <div>
         <p className="text-xs text-gray-600 cursor-pointer active:text-black hover:underline">{props.comment.author}</p>
         <p>{props.comment.content}</p>
-        <Votes type="comment" loggedIn={loggedIn} replyFunc={toggleForm} content={props.comment} /> 
+        {props.comment.votes === 'disabled' ? '' : <Votes type="comment" loggedIn={loggedIn} replyFunc={toggleForm} content={props.comment} />} 
         {commentForm}
       </div>
       

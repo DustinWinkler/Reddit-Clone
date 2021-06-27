@@ -1,5 +1,6 @@
-import {db} from "../firebase"
+import {db, storage} from "../firebase"
 import firebase from "firebase/app"
+import { hardDelete } from "./comments"
 
 async function getPosts(subreddit) {
   let posts = []
@@ -62,8 +63,35 @@ function appendComment(postID, commentID) {
   })
 }
 
-function deletePost(postID) {
+async function deletePost(postID) {
+  let post = await getPost(postID)
+
+  for (const commentID of post.comments) {
+    hardDelete(commentID)
+  }
+
+  console.log("deleting post")
   db.collection("posts").doc(postID).delete()
+
 }
 
-export { getPosts, getPost, incrementKarma, decrementKarma, addPost, appendComment, deletePost }
+async function uploadFile(file) {
+  storage.ref().put(file).then(snapshot => {
+    console.log("uploaded file")
+  })
+}
+
+async function getFileUrl(filename) {
+  let returnUrl = ''
+  await storage.ref().child(filename).getDownloadURL().then(url => {
+    returnUrl = url
+  })
+
+  return returnUrl
+}
+
+async function deleteFile(filename) {
+  storage.ref().child(filename).delete()
+}
+
+export { getPosts, getPost, incrementKarma, decrementKarma, addPost, appendComment, deletePost, uploadFile, getFileUrl, deleteFile }

@@ -126,4 +126,13 @@ function deleteComment(commentID) {
   })
 }
 
-export { getComment, getTopLevelCommentIDs, getChildComments, hasChildren, incrementKarma, decrementKarma, createComment, replyToComment, getTotalComments, deleteComment }
+function hardDelete(commentID) {
+  db.collection("comments").dic(commentID).delete().then(() => {
+    console.log("Comment successfully deleted!");
+  }).catch((error) => {
+      console.error("Error removing comment: ", error);
+  });
+
+}
+
+export { getComment, getTopLevelCommentIDs, getChildComments, hasChildren, incrementKarma, decrementKarma, createComment, replyToComment, getTotalComments, deleteComment, hardDelete }

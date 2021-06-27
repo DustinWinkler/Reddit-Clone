@@ -14,6 +14,7 @@ function PostForm(props) {
   const [formInput, setFormInput] = useState('')
   const [formTitle, setFormTitle] = useState('')
   const [formContent, setFormContent] = useState('')
+  const [formFile, setFormFile] = useState()
 
   const loggedIn = useContext(LoggedInContext)
 
@@ -24,23 +25,20 @@ function PostForm(props) {
   }, [formType])
 
   const uploadInput = (
-    <label>
-      upload Input
-      <input type="file" />
+    <label className="my-2">
+      <input type="file" onChange={handleFileChange} />
     </label>
   )
 
   const linkInput = (
-    <label>
-      link input
+    <label className="my-2">
       <input type="text" placeholder="Video or Image Link" className="border my-1 w-full rounded-lg p-2" />
     </label>
   )
 
   const textInput = (
     <label className="">
-      text input
-      <textarea className="border my-1 w-full rounded-lg p-2" value={formContent} onChange={handleContentChange} placeholder="Content" rows="5" />
+      <textarea className="border my-1 w-full rounded-lg p-2" defaultInputValue={formContent} onChange={handleContentChange} placeholder="Content" rows="5" />
     </label>
   )
 
@@ -54,6 +52,30 @@ function PostForm(props) {
 
   function handleContentChange(e) {
     setFormContent(e.target.value)
+  }
+
+  // return random number for the purpose of uniquely naming files uploaded
+  function randomNumber() {
+    return Math.floor(100000 + Math.random() * 900000)
+  }
+
+  function handleFileChange(e) {
+    let file = e.target.files[0]
+
+    // i.e ".jpeg" or ".mp4"
+    let extension = "." + file.type.split("/")[1]
+
+    // appends random number to make file name unique to prevent uploading of files with same name
+    let newName = file.name.split(".")[0] + randomNumber() + extension
+
+    Object.defineProperty(file, 'name', {
+      writable: true,
+      value: newName
+    })
+
+    setFormFile(file)
+
+    console.log("updated file -> ", file)
   }
 
   function toggleForm() {
@@ -71,28 +93,38 @@ function PostForm(props) {
     let post = {
       author: localStorage.getItem("curr_user"),
       comments: [],
-      content: formContent,
       subreddit: props.subreddit,
       title: formTitle,
-      votes: 0
+      votes: 0,
+      type: formType
+    }
+
+    if (formType === "Image" || formType === "Video") {
+      post.fileUrl = formFile.name
+    } else {
+      post.content = formContent
     }
 
     addPost(post).then(id => {
       post["id"] = id
       props.addPostToStateFunc(post)
       setShowForm(false)
+
+      if (formType === "Image" || formType === "Video") {
+
+      }
     })   
   }
 
   const buttonStyles="border border-blue-400 py-1 px-3 bg-white rounded-lg w-full mx-1 hover:bg-blue-400 hover:border-gray-500 hover:text-white"
 
   return (
-    <div className="my-6">
+    <div className="my-6 bg-white py-2 px-4 border rounded-lg w-max max-w-2xl mx-auto">
       <ToggleFormButton text="Create a Post" toggleForm={toggleForm} showForm={showForm} />
 
       <div className={(showForm ? "h-auto max-h-96 " : "max-h-0 ") + "overflow-hidden transition-all duration-500 w-96 mx-auto text-center"}>
         
-      <p>{formType}</p>
+      <p className="text-xl font-bold p-1 rounded-lg">{formType}</p>
 
       <div className="flex w-full justify-around mb-2">
         <button className={buttonStyles} onClick={()=>{switchType("Text")}}>Text</button>
