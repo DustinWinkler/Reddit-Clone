@@ -43,12 +43,37 @@ function Post(props) {
   useEffect(() => {
     if (props.post.type === "Text") {
       setContent(<p>{props.post.content}</p>)
-    } else if (props.post.type === "Image" || props.post.type === "Video") {
+      setLoadingContent(false)
+    } 
+    
+    if (props.post.type === "Image") {
       getFileUrl(props.post.fileUrl).then(url => {
-        setContent(<img className="max-w-xs max-h-xs" src={url} alt="user uploaded" />)
+        setContent(<img className="max-w-md max-h-lg mx-auto" src={url} alt="user uploaded" />)
         setLoadingContent(false)
+      })
+    }
+
+    if (props.post.type === "Video") {
+      getFileUrl(props.post.fileUrl).then(url => {
+        setContent(
+        <div className="max-h-sm">
+          <video controls height="200" width="200" className="mx-auto" src={url} alt="user uploaded" />
+        </div>)
+        setLoadingContent(false)
+      })
+    }
+
+    if (props.post.type === "Link") {
+      if(props.post.content.includes("youtu")) {
+        let videoID = YouTubeGetID(props.post.content)
+        getYTAspectRatio(videoID).then(obj => {
+          setContent(<iframe className="mx-auto" width={obj.width} height={obj.height} title="YT video" src={"https://www.youtube.com/embed/" + videoID}></iframe>)
+        })
+        
+      } else {
+        setContent(<a className="hover:text-blue-400" href={props.post.content}>{props.post.content}</a>)
       }
-      )
+      setLoadingContent(false)
     }
   }, [])
 
@@ -68,6 +93,47 @@ function Post(props) {
     }
   }
 
+  function YouTubeGetID(url){
+    url = url.split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
+    return (url[2] !== undefined) ? url[2].split(/[^0-9a-z_\-]/i)[0] : url[0];
+  }
+
+  async function getYTAspectRatio(videoID) {
+    let height
+    let width
+
+    await fetch("https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=" + videoID)
+      .then(resp => resp.json())
+      .then(data => {
+        height = data.height
+        width = data.width
+      })
+     
+
+    if (parseFloat(21/9).toFixed(4) == parseFloat(width/height).toFixed(4)) {
+      // 21:9 ratio
+      return {
+        height: 903,
+        width: 387
+      }
+    }
+    else if (parseFloat(4/3).toFixed(4) == parseFloat(width/height).toFixed(4)) {
+      // 4:3 ratio
+      return {
+        height: 402,
+        width: 536
+      }
+    }
+
+    else {
+      // 16:9 ratio for all else
+      return {
+        height: 405,
+        width: 720
+      }
+    }
+  }
+
 
   return (
     <div className="relative z-0 p-2 my-3 border border-gray-200 hover:border-gray-400 bg-white rounded shadow-lg">
@@ -75,7 +141,7 @@ function Post(props) {
         <FontAwesomeIcon icon={faTrash} /> 
       </div> : ""}
 
-      <p>{"Posted by "}
+      <p className="text-sm">{"Posted by "}
       <Link to={"/users/" + props.post.author}>
         <span className="text-blue-400 hover:underline">{props.post.author}</span>
       </Link>  {"in "}
@@ -84,7 +150,7 @@ function Post(props) {
       </Link>
       </p>
 
-      <h1 className="text-lg">{props.post.title}</h1>
+      <h1 className="text-xl my-1 font-bold">{props.post.title}</h1>
       {loadingContent ? <LoadingIcon /> : content}
       {props.comments === 'disabled' ? "" :
       <Link className="text-sm hover:underline hover:text-blue-500" to={"/" + props.post.subreddit + "/comments/" + props.post.id } >{commentCount} Comments</Link>}

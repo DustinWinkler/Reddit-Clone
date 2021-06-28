@@ -32,7 +32,8 @@ function PostForm(props) {
 
   const linkInput = (
     <label className="my-2">
-      <input type="text" placeholder="Video or Image Link" className="border my-1 w-full rounded-lg p-2" />
+      <p>Youtube Links will be embedded nicely :)</p>
+      <input type="text" placeholder="Video, Image, News, etc." defaultInputValue={formContent} onChange={handleContentChange} className="border my-1 w-full rounded-lg p-2" />
     </label>
   )
 
@@ -61,6 +62,11 @@ function PostForm(props) {
 
   function handleFileChange(e) {
     let file = e.target.files[0]
+
+    if (file.size > 10000000) {
+      alert("File size cannot exceed 10 MB")
+      return
+    }
 
     // i.e ".jpeg" or ".mp4"
     let extension = "." + file.type.split("/")[1]

@@ -59,4 +59,16 @@ async function updateUser(username, user) {
   db.collection("users").doc(username).update(user)
 }
 
-export { getUserInfo, createUser, usernamePasswordExists, userExists, updateUser }
+async function getUserPosts(username) {
+  let posts = []
+  await db.collection('posts').where('author', '==', username).get().then(query => {
+    query.forEach(doc => {
+      let newPost = doc.data()
+      newPost['id'] = doc.id
+      posts.push(newPost)
+    })
+  })
+  return posts
+}
+
+export { getUserInfo, createUser, usernamePasswordExists, userExists, updateUser, getUserPosts }
