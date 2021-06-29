@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import {getUserPosts, userExists} from "../API/users"
+import LoadingIcon from './LoadingIcon'
+import Post from './Post'
 // receive user id and show all their posts
 
 function UserProfile() {
@@ -23,15 +25,21 @@ function UserProfile() {
   // if user exists, get their posts
   useEffect(() => {
     getUserPosts(username).then(posts => {
-      if (posts.length) {
-
+      if (posts.length > 0) {
+        setPosts(posts)
+        setLoadingPosts(false)
+        setPostsEmpty(false)
+      } else {
+        setLoadingPosts(false)
       }
     })
   }, [doesUserExist])
 
   return (
-    <div>
-      this is the userProfile component
+    <div className="w-3/5 md:w-full mx-auto">
+      <p className="my-4 mx-auto w-3/5 text-center text-2xl font-bold">This is {username}'s Profile</p>
+      {loadingPosts ? <LoadingIcon /> : posts.map(post => {return <Post key={post.id} post={post} />})}
+      {postsEmpty && !loadingPosts ? <p className="my-4 mx-auto w-3/5 text-center text-2xl font-bold">This user has made no posts :(</p> : ""}
     </div>
   )
 }

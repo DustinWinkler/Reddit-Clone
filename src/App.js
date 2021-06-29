@@ -6,7 +6,7 @@ import Posts  from "./components/Posts"
 import Subreddits from './components/Subreddits'
 import Subreddit from './components/Subreddit'
 import UserProfile from './components/UserProfile'
-import { getUserInfo } from "./API/users"
+import { getUserInfo, getUserPosts } from "./API/users"
 
 export const LoggedInContext = createContext()
 
@@ -35,7 +35,7 @@ function App() {
   return (
     <LoggedInContext.Provider value={userSignedIn}>
       <Router>
-        <div>
+        <div className="w-screen">
         <Header signOutFunc={signOut} signInFunc={signIn} />
 
         <Switch>

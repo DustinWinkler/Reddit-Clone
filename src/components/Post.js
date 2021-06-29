@@ -56,7 +56,7 @@ function Post(props) {
     if (props.post.type === "Video") {
       getFileUrl(props.post.fileUrl).then(url => {
         setContent(
-        <div className="max-h-sm">
+        <div className="w-48">
           <video controls height="200" width="200" className="mx-auto" src={url} alt="user uploaded" />
         </div>)
         setLoadingContent(false)
