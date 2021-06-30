@@ -92,7 +92,7 @@ function PostForm(props) {
     e.preventDefault()
 
     if (!loggedIn) {
-      alert("You must be logged in to comment.")
+      alert("You must be logged in to create posts.")
       return
     }
 

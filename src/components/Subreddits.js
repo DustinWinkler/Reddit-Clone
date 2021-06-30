@@ -38,7 +38,7 @@ function Subreddits() {
 
     subExists(formTitle).then(bool => {
       if (!loggedIn) {
-        alert("You must be logged in to comment.")
+        alert("You must be logged in to create a subreddit.")
         return
       }
 

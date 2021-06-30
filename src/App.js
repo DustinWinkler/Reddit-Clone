@@ -37,7 +37,7 @@ function App() {
   return (
     <LoggedInContext.Provider value={userSignedIn}>
       <Router>
-        <div className="w-screen">
+        
         <Header signOutFunc={signOut} signInFunc={signIn} />
 
         <Switch>
@@ -48,7 +48,7 @@ function App() {
           <Route exact path='/:subreddit' component={Subreddit} />
         </Switch>
         
-      </div>
+
       </Router>
       </LoggedInContext.Provider>
   );

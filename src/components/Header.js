@@ -49,7 +49,7 @@ function Header(props) {
   }
 
   const signUpForm = (
-    <div id="signup-form" className="absolute min-h-screen h-full p-2 w-screen top-0">
+    <div id="signup-form" className="absolute min-h-screen h-full p-2 w-full top-0">
       <div className="relative z-20 p-4 my-12 bg-white mx-auto max-w-80 w-full lg:w-2/5 border-2 rounded-xl border-black opacity-100">
       <h1 className="mb-2 text-2xl">Sign Up</h1>
         <form className="block" onSubmit={handleSignUp}>
@@ -80,7 +80,7 @@ function Header(props) {
   }
   
   const signInForm = (
-    <div id="signin-form" className="absolute min-h-screen h-full p-2 w-screen top-0">
+    <div id="signin-form" className="absolute min-h-screen h-full p-2 w-full top-0">
       <div className="relative z-20 p-4 my-12 bg-white mx-auto max-w-80 w-full lg:w-2/5 border-2 rounded-xl border-black opacity-100">
       <h1 className="mb-2 text-2xl">Sign In</h1>
         <form className="block" onSubmit={handleSignIn}>
@@ -97,7 +97,7 @@ function Header(props) {
   )
 
   return (
-    <div className="relative w-screen text-center bg-white z-50">
+    <div className="relative w-full text-center bg-white z-50">
       <div className="border-b-2 border-black w-full lg:w-3/5 mx-auto text-center flex flex-col md:flex-row justify-around filter drop-shadow-lg">
       <div className="w-full mt-1">
         <NavLink to="/subreddits" activeClassName="text-red-400" className="hover:text-blue-600">Subreddits</NavLink>
