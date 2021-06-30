@@ -152,7 +152,6 @@ function Post(props) {
     }
   }
 
-
   return (
     <div className="relative z-0 p-2 my-3 border border-gray-200 hover:border-gray-400 bg-white rounded shadow-lg">
       {canDelete ? <div onClick={compDeletePost} className="absolute top-2 right-5 fill-current text-red-600 cursor-pointer"> 

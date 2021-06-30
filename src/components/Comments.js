@@ -92,15 +92,15 @@ function Comments(props) {
   }
 
   return (
-    <div className="w-3/5 mx-auto m-2 justify-space-around bg-white striped">
+    <div className="w-full lg:w-3/5 p-2 mx-auto justify-space-around bg-white striped">
       
-      <div className="flex justify-between">
-        <div className="w-3/5 m-1">
+      <div className="flex flex-col lg:flex-row justify-between">
+        <div className="w-full lg:w-3/5 m-1">
           { loadingPost ? "loading post" :
             <Post post={post} comments="disabled" />}
         </div>
 
-        <div className="border w-2/5 p-2 bg-white rounded-lg mt-1 hover:border-gray-400 shadow-lg">
+        <div className="border w-full lg:w-2/5 p-2 bg-white rounded-lg mb-3 hover:border-gray-400 shadow-lg">
           <p className="text-center p-1">
           {`r/${subreddit}`}
           </p>
@@ -108,14 +108,14 @@ function Comments(props) {
         </div>
       </div>
 
-      <div className="flex w-3/5">
+      <div className="flex w-full">
         <form className="w-full mr-2" onSubmit={handleSubmit}>
           <textarea className="w-full p-3 border rounded-xl" rows="4" placeholder="Write your comment." value={formContent} onChange={handleChange} />
-          <input className="w-max mx-auto py-0 px-3 border-2 border-blue-500 rounded-lg hover:bg-blue-500 hover:text-white hover:border-gray-600 cursor-pointer" value="Post Comment" type="submit" /> 
+          <input className="w-max min-w-px mx-auto py-0 px-3 border-2 border-blue-500 rounded-lg hover:bg-blue-500 hover:text-white hover:border-gray-600 cursor-pointer" value="Post Comment" type="submit" /> 
         </form>
       </div>
 
-      <div>
+      <div className="w-full pr-2">
         {loadingComments ? <LoadingIcon/> : 
         comments.map(comment => {
           return <Comment loggedIn={props.loggedIn} key={comment.id} comment={comment} />

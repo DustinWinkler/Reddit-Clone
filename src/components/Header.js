@@ -47,8 +47,8 @@ function Header(props) {
   }
 
   const signUpForm = (
-    <div id="signup-form" className="absolute min-h-screen h-full w-screen top-0">
-      <div className="relative z-20 p-4 my-12 bg-white mx-auto max-w-80 w-2/5 border-2 rounded-xl border-black opacity-100">
+    <div id="signup-form" className="absolute min-h-screen h-full p-2 w-screen top-0">
+      <div className="relative z-20 p-4 my-12 bg-white mx-auto max-w-80 w-full lg:w-2/5 border-2 rounded-xl border-black opacity-100">
       <h1 className="mb-2 text-2xl">Sign Up</h1>
         <form className="block" onSubmit={handleSignUp}>
           <label className="block">Username</label>
@@ -78,8 +78,8 @@ function Header(props) {
   }
   
   const signInForm = (
-    <div id="signin-form" className="absolute min-h-screen h-full w-screen top-0">
-      <div className="relative z-20 p-4 my-12 bg-white mx-auto max-w-80 w-2/5 border-2 rounded-xl border-black opacity-100">
+    <div id="signin-form" className="absolute min-h-screen h-full p-2 w-screen top-0">
+      <div className="relative z-20 p-4 my-12 bg-white mx-auto max-w-80 w-full lg:w-2/5 border-2 rounded-xl border-black opacity-100">
       <h1 className="mb-2 text-2xl">Sign In</h1>
         <form className="block" onSubmit={handleSignIn}>
           <label className="block">Username</label>
@@ -109,7 +109,7 @@ function Header(props) {
         <span className="my-auto">Signed in as {localStorage.getItem("curr_user")}</span>
         <button onClick={()=>{props.signOutFunc()}} className="w-1/3 hover:text-blue-600">Sign Out</button>
       </div> :
-      <div className="flex justify-around opacity-100">
+      <div className="flex w-full justify-around opacity-100">
         <button onClick={()=>{setSigningIn(true)}} className="hover:text-blue-600">Sign In</button>
         <button onClick={()=>{setSigningUp(true)}} className="hover:text-blue-600">Sign Up</button>
       </div>
