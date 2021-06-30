@@ -29,13 +29,13 @@ function Posts(props) {
 	}, [subreddit])
 
 	const rAllPostingDisclaimer = (
-		<p className="w-screen bg-white text-center -my-2 p-1 text-xs font-bold">
+		<p className="w-full lg:w-3/5 bg-white mx-auto text-center -my-2 p-1 text-xs font-bold">
 			You can create your own posts by going to the subreddit you would like to post in.
 		</p>
 	)
 
   return (
-    <div className="relative z-0 mt-4 w-3/5 mx-auto striped">
+    <div className="relative z-0 mt-4 w-full lg:w-3/5 mx-auto p-2 striped">
 			{subreddit === 'all' || '' ? rAllPostingDisclaimer : ''}
 
       { loadingPosts ? <LoadingIcon/> :

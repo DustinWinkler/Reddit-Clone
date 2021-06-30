@@ -40,14 +40,14 @@ function Subreddit() {
         r/{subreddit}
       </header>
 
-      <div className="p-1 w-3/5 mx-auto text-center">
-        <p className="py-1 px-4 bg-white w-max max-w-3xl mx-auto border border-gray-400 rounded ">{subInfo}</p>
+      <div className="p-1 w-screen md:w-3/5 mx-auto text-center">
+        <p className="py-1 px-4 bg-white mx-auto border border-gray-400 rounded ">{subInfo}</p>
       </div>
 
 
       <PostForm subreddit={subreddit} addPostToStateFunc={addPostToState} />
 
-    <div className="transition-all duration-500 mx-auto w-3/5">
+    <div className="transition-all duration-500 mx-auto w-full md:w-3/5 p-2">
       {loadingPosts ? <LoadingIcon/> : posts.map(post => {return <Post key={post.id} post={post} />})}
     </div>
 

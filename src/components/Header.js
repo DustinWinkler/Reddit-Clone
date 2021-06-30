@@ -96,20 +96,20 @@ function Header(props) {
 
   return (
     <div className="relative w-screen text-center bg-white z-50">
-      <div className="border-b-2 border-black w-full mx-auto text-center flex flex-col justify-around filter drop-shadow-lg">
+      <div className="border-b-2 border-black w-full lg:w-3/5 mx-auto text-center flex flex-col md:flex-row justify-around filter drop-shadow-lg">
       <div className="w-full mt-1">
         <NavLink to="/subreddits" activeClassName="text-red-400" className="hover:text-blue-600">Subreddits</NavLink>
       </div>  
         
       {/* Link to Home */}
-      <NavLink exact to="/" activeClassName="text-red-400" className="order-first text-2xl w-full cursor-pointer hover:text-blue-600">Reddit</NavLink>
+      <NavLink exact to="/" activeClassName="text-red-400" className="order-first md:order-none text-2xl w-full cursor-pointer hover:text-blue-600">Reddit</NavLink>
 
       {loggedIn ? 
       <div className="flex justify-around w-full opacity-100">
-        <span className="m-auto">Signed in as {localStorage.getItem("curr_user")}</span>
+        <span className="my-auto">Signed in as {localStorage.getItem("curr_user")}</span>
         <button onClick={()=>{props.signOutFunc()}} className="w-1/3 hover:text-blue-600">Sign Out</button>
       </div> :
-      <div className="flex justify-around w-1/3 opacity-100">
+      <div className="flex justify-around opacity-100">
         <button onClick={()=>{setSigningIn(true)}} className="hover:text-blue-600">Sign In</button>
         <button onClick={()=>{setSigningUp(true)}} className="hover:text-blue-600">Sign Up</button>
       </div>

@@ -13,6 +13,17 @@ function Post(props) {
   const [canDelete, setCanDelete] = useState(false)
   const [content, setContent] = useState('')
   const [loadingContent, setLoadingContent] = useState(true)
+  const [screenWidth, setScreenWidth] = useState(window.innerWidth)
+
+  // resize window event
+  useEffect(() => {
+    function handleResize() {
+      setScreenWidth(window.innerWidth)
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   // check canDelete status
   useEffect(() => {
@@ -48,7 +59,7 @@ function Post(props) {
     
     if (props.post.type === "Image") {
       getFileUrl(props.post.fileUrl).then(url => {
-        setContent(<img className="max-w-md max-h-lg mx-auto" src={url} alt="user uploaded" />)
+        setContent(<img className="p-2 mx-auto" src={url} alt="user uploaded" />)
         setLoadingContent(false)
       })
     }
@@ -56,7 +67,7 @@ function Post(props) {
     if (props.post.type === "Video") {
       getFileUrl(props.post.fileUrl).then(url => {
         setContent(
-        <div className="w-48">
+        <div className="w-48 mx-auto">
           <video controls height="200" width="200" className="mx-auto" src={url} alt="user uploaded" />
         </div>)
         setLoadingContent(false)
@@ -71,7 +82,7 @@ function Post(props) {
         })
         
       } else {
-        setContent(<a className="hover:text-blue-400" href={props.post.content}>{props.post.content}</a>)
+        setContent(<a className="block hover:text-blue-400" href={props.post.content}>{props.post.content}</a>)
       }
       setLoadingContent(false)
     }
@@ -101,6 +112,13 @@ function Post(props) {
   async function getYTAspectRatio(videoID) {
     let height
     let width
+    let maxWidth = 0
+
+    if (screenWidth < 800) {
+      maxWidth = parseInt(screenWidth * 0.7)
+    } else {
+      maxWidth = parseInt(screenWidth * 0.45)
+    }
 
     await fetch("https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=" + videoID)
       .then(resp => resp.json())
@@ -111,25 +129,25 @@ function Post(props) {
      
 
     if (parseFloat(21/9).toFixed(4) == parseFloat(width/height).toFixed(4)) {
-      // 21:9 ratio
+      // 21:9 ratio 
       return {
-        height: 903,
-        width: 387
+        height: maxWidth * (9/21), 
+        width: maxWidth
       }
     }
     else if (parseFloat(4/3).toFixed(4) == parseFloat(width/height).toFixed(4)) {
       // 4:3 ratio
       return {
-        height: 402,
-        width: 536
+        height: parseInt(maxWidth * (3/4)),
+        width: maxWidth
       }
     }
 
     else {
       // 16:9 ratio for all else
       return {
-        height: 405,
-        width: 720
+        height: parseInt(maxWidth * (9/16)),
+        width: maxWidth
       }
     }
   }
@@ -140,6 +158,8 @@ function Post(props) {
       {canDelete ? <div onClick={compDeletePost} className="absolute top-2 right-5 fill-current text-red-600 cursor-pointer"> 
         <FontAwesomeIcon icon={faTrash} /> 
       </div> : ""}
+
+      <p className="hidden">{screenWidth}</p>
 
       <p className="text-sm">{"Posted by "}
       <Link to={"/users/" + props.post.author}>

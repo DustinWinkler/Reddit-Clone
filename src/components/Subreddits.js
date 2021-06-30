@@ -86,7 +86,7 @@ function Subreddits() {
 
       {subredditForm}
 
-      <div className={(showForm ? "mt-64 " : "") + "transition-all duration-500 w-3/5 mx-auto"}>
+      <div className={(showForm ? "mt-64 " : "") + "transition-all duration-500 w-full md:w-3/5 p-2 mx-auto"}>
       { loadingSubs ? <LoadingIcon /> :
       subList.map(sub => {
         return (
