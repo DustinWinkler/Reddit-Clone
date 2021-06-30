@@ -1,11 +1,9 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useParams } from "react-router-dom"
-import {addPost, getPosts} from '../API/posts'
+import { getPosts} from '../API/posts'
 import Post from './Post'
 import { getSubredditInfo } from '../API/subreddits'
-import ToggleFormButton from './ToggleFormButton'
 import LoadingIcon from './LoadingIcon'
-import Posts from './Posts'
 import PostForm from './PostForm'
 
 function Subreddit() {
@@ -36,7 +34,7 @@ function Subreddit() {
 
   return (
     <div>
-      <header className="text-3xl font-bold mx-auto w-max text-center m-2 bg-white rounded-lg px-12 py-1 bg-opacity-70 border border-gray-400">
+      <header className="text-3xl font-bold mx-auto w-max text-center my-2 bg-white rounded-lg px-12 py-1 bg-opacity-70 border border-gray-400">
         r/{subreddit}
       </header>
 
@@ -47,7 +45,7 @@ function Subreddit() {
 
       <PostForm subreddit={subreddit} addPostToStateFunc={addPostToState} />
 
-    <div className="transition-all duration-500 mx-auto w-full md:w-3/5 p-2">
+    <div className="transition-all duration-500 mx-auto w-full md:w-3/5 px-2">
       {loadingPosts ? <LoadingIcon/> : posts.map(post => {return <Post key={post.id} post={post} />})}
     </div>
 

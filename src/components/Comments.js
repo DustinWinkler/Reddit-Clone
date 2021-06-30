@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { useParams } from "react-router-dom"
 import {LoggedInContext} from "../App"
-import { getTopLevelCommentIDs, getChildComments, getComment, createComment } from "../API/comments"
+import { getTopLevelCommentIDs, getComment, createComment } from "../API/comments"
 import { getPost } from "../API/posts"
 import { getSubredditInfo } from "../API/subreddits"
 import Comment from './Comment'

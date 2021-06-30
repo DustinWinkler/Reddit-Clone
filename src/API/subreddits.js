@@ -20,7 +20,6 @@ async function getSubredditInfo(subredditName) {
     let subreddit = doc.data()
     content = subreddit.description
   })
-  console.log("getsubinfo content -> ", content)
   return content
 }
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { getUserInfo, updateUser } from '../API/users'
+import { updateUser } from '../API/users'
 import { incrementKarma as commentUp, decrementKarma as commentDown } from "../API/comments"
 import { incrementKarma as postUp, decrementKarma as postDown } from "../API/posts"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -7,7 +7,7 @@ import { faLongArrowAltDown, faLongArrowAltUp, faReply } from '@fortawesome/free
 
 function Votes(props) {
   const [netVotes, setNetVotes] = useState(props.content.votes)
-  const [loggedIn, setLoggedIn] = useState(props.loggedIn)
+  const loggedIn = props.loggedIn
   const [userInfo, setUserInfo] = useState(JSON.parse(localStorage.getItem("userInfo")))
   const [hasUpvoted, setHasUpvoted] = useState(false)
   const [hasDownvoted, setHasDownvoted] = useState(false)

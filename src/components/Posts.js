@@ -9,9 +9,7 @@ function Posts(props) {
   const [posts, setPosts] = useState([])
 	const [subreddit, setSubreddit] = useState('')
 	const [loadingPosts, setLoadingPosts] = useState(true)
-	const [postType, setPostType] = useState('text')
 	
-
 	// set subreddit then getposts
 	useEffect(() => {
 		if (!props.subreddit || props.subreddit === 'all') {

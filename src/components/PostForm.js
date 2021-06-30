@@ -138,7 +138,7 @@ function PostForm(props) {
   const buttonStyles="border border-blue-400 py-1 px-3 bg-white rounded-lg w-full mx-1 hover:bg-blue-400 hover:border-gray-500 hover:text-white"
 
   return (
-    <div className="my-6 bg-white py-2 px-4 border rounded-lg w-max max-w-2xl mx-auto">
+    <div className="my-1 bg-white py-2 px-4 border rounded-lg w-max max-w-2xl mx-auto">
       <ToggleFormButton text="Create a Post" toggleForm={toggleForm} showForm={showForm} />
 
       <div className={(showForm ? "h-auto max-h-96 " : "max-h-0 ") + "overflow-hidden transition-all duration-300 ease-in-out w-96 mx-auto text-center"}>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { NavLink } from "react-router-dom"
+import { NavLink, useHistory } from "react-router-dom"
 import { createUser, usernamePasswordExists, userExists } from "../API/users"
 import { LoggedInContext } from '../App'
 
@@ -11,6 +11,8 @@ function Header(props) {
   const [signingUp, setSigningUp] = useState(false)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+
+  const history = useHistory()
 
   const loggedIn = useContext(LoggedInContext)
 
@@ -41,7 +43,7 @@ function Header(props) {
         createUser(username, password)
         setSigningUp(false)
         props.signInFunc(username)
-        window.location.reload()
+        history.push("/")
       }
     })
   }
@@ -70,7 +72,7 @@ function Header(props) {
       if (val) {
         props.signInFunc(username)
         setSigningIn(false)
-        window.location.reload()
+        history.push("/")
       } else {
         alert("Invalid credentials")
       }

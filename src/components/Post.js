@@ -13,17 +13,7 @@ function Post(props) {
   const [canDelete, setCanDelete] = useState(false)
   const [content, setContent] = useState('')
   const [loadingContent, setLoadingContent] = useState(true)
-  const [screenWidth, setScreenWidth] = useState(window.innerWidth)
-
-  // resize window event
-  useEffect(() => {
-    function handleResize() {
-      setScreenWidth(window.innerWidth)
-    }
-
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
+  const screenWidth = window.innerWidth
 
   // check canDelete status
   useEffect(() => {
@@ -44,9 +34,11 @@ function Post(props) {
 
   // get total comments for post preview i.e (4 comments)
   useEffect(() => {
-    if (!props.comments === 'disabled') {
-      getTotalComments(props.post.id).then(count => setCommentCount(count))
-      setLoadingContent(false)
+    if (props.comments !== 'disabled') {
+      getTotalComments(props.post.id).then(count => {
+        setCommentCount(count)
+        setLoadingContent(false)
+      })
     }
   }, [])
 
@@ -128,14 +120,14 @@ function Post(props) {
       })
      
 
-    if (parseFloat(21/9).toFixed(4) == parseFloat(width/height).toFixed(4)) {
+    if (parseFloat(21/9).toFixed(4) === parseFloat(width/height).toFixed(4)) {
       // 21:9 ratio 
       return {
         height: maxWidth * (9/21), 
         width: maxWidth
       }
     }
-    else if (parseFloat(4/3).toFixed(4) == parseFloat(width/height).toFixed(4)) {
+    else if (parseFloat(4/3).toFixed(4) === parseFloat(width/height).toFixed(4)) {
       // 4:3 ratio
       return {
         height: parseInt(maxWidth * (3/4)),
@@ -153,7 +145,7 @@ function Post(props) {
   }
 
   return (
-    <div className="relative z-0 p-2 my-3 border border-gray-200 hover:border-gray-400 bg-white rounded shadow-lg">
+    <div className="relative z-0 p-2 lg:p-3 my-3 border border-gray-200 hover:border-gray-400 bg-white rounded shadow-lg">
       {canDelete ? <div onClick={compDeletePost} className="absolute top-2 right-5 fill-current text-red-600 cursor-pointer"> 
         <FontAwesomeIcon icon={faTrash} /> 
       </div> : ""}

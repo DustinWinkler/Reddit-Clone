@@ -1,4 +1,3 @@
-import { comment } from 'postcss'
 import firebase from "firebase/app"
 import {db} from '../firebase'
 import {appendComment, getPost} from "./posts"
@@ -61,7 +60,6 @@ async function decrementKarma(commentID, num) {
   })
 }
 
-// for two below -> to get doc id for purposes of appending it to posts or other comments do -> let newComment = db.collection("comments").doc(), then you can do newComment.id and then newComment.set(data)
 function createComment(comment, postID) {
   db.collection("comments").add(comment).then(docRef => {
     appendComment(postID, docRef.id)
@@ -88,7 +86,7 @@ async function replyToComment(comment, idToReplyTo) {
 
 // use new Promise to force waiting for all children
 async function getTotalComments(postID) {
-
+  
   async function checkChildren(commentID) {
     let children = []
     let bool = await hasChildren(commentID)
@@ -114,9 +112,8 @@ async function getTotalComments(postID) {
     commentCount += 1
     await checkChildren(commentID)
   }
-
+  
   return commentCount
-
 }
 
 function deleteComment(commentID) {

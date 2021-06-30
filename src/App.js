@@ -6,7 +6,7 @@ import Posts  from "./components/Posts"
 import Subreddits from './components/Subreddits'
 import Subreddit from './components/Subreddit'
 import UserProfile from './components/UserProfile'
-import { getUserInfo, getUserPosts } from "./API/users"
+import { getUserInfo } from "./API/users"
 
 export const LoggedInContext = createContext()
 
@@ -41,7 +41,7 @@ function App() {
         <Switch>
           <Route exact path='/' component={Posts} />
           <Route path='/subreddits' component={Subreddits} />
-          <Route path='/users/:username' component={UserProfile} />
+          <Route exact path='/users/:username' component={UserProfile} />
           <Route path='/:subreddit/comments/:postid' component={Comments} />
           <Route exact path='/:subreddit' component={Subreddit} />
         </Switch>

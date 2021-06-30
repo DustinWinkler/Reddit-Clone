@@ -35,11 +35,21 @@ function UserProfile() {
     })
   }, [doesUserExist])
 
+  let content
+
+  if (!doesUserExist) {
+    content = "This user does not exist"
+  }
+
+  if (doesUserExist && postsEmpty) {
+    content = "This user hasn't made any Posts"
+  }
+
   return (
-    <div className="w-3/5 md:w-full mx-auto">
+    <div className="w-full lg:w-3/5 mx-auto">
       <p className="my-4 mx-auto w-3/5 text-center text-2xl font-bold">This is {username}'s Profile</p>
       {loadingPosts ? <LoadingIcon /> : posts.map(post => {return <Post key={post.id} post={post} />})}
-      {postsEmpty && !loadingPosts ? <p className="my-4 mx-auto w-3/5 text-center text-2xl font-bold">This user has made no posts :(</p> : ""}
+      <p className="my-4 mx-auto w-3/5 text-center text-2xl font-bold">{content}</p>
     </div>
   )
 }
