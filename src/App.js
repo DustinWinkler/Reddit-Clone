@@ -1,5 +1,5 @@
 import React, { useState, useEffect, createContext } from 'react'
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
+import { BrowserRouter as Router, Switch, Route, useHistory } from "react-router-dom"
 import Comments from './components/Comments'
 import Header from './components/Header'
 import Posts  from "./components/Posts"
@@ -13,6 +13,8 @@ export const LoggedInContext = createContext()
 function App() {
   const [userSignedIn, setUserSignedIn] = useState(false)
 
+  const history = useHistory()
+
   useEffect(() => {
     // check if signed in, if true, set the state to be so
     if(localStorage.getItem("curr_user") !== null) {
@@ -23,7 +25,7 @@ function App() {
   function signOut() {
     setUserSignedIn(false)
     localStorage.removeItem("curr_user")
-    window.location.reload()
+    history.push("/")
   }
 
   function signIn(username) {
