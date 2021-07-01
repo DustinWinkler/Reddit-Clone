@@ -6,6 +6,7 @@ async function getComment(commentID) {
   let comment = {}
 
   await db.collection("comments").doc(commentID).get().then(doc => {
+    console.log("comments exists? ", commentID, doc.exists)
     comment = doc.data()
     comment['id'] = doc.id
   })
@@ -112,7 +113,7 @@ async function getTotalComments(postID) {
     commentCount += 1
     await checkChildren(commentID)
   }
-  
+
   return commentCount
 }
 

@@ -54,10 +54,6 @@ function Comment(props) {
       setCanDelete(true)
     }
 
-    console.log("username in canDelete -> ", username)
-    console.log("author in canDelete -> ", author)
-    console.log("username === author ? ", username === author)
-
   }, [])
 
   const commentForm = (
@@ -105,10 +101,22 @@ function Comment(props) {
   function compDeleteComment() {
     if (window.confirm("Are you sure you would like to delete this comment?")) {
       deleteComment(props.comment.id)
-      console.log("comment deleted")
       window.location.reload()
     }
   }
+
+  function urlify(text) {
+    let urlRegex = /(https?:\/\/[^\s]+)/g
+    if (urlRegex.test(text)) {
+      return (<a className="text-blue-500 hover:text-blue-700" href={text}>{text}</a>)
+    } else {
+      return (<span>{text + " "}</span>)
+    }
+  }
+
+  let string = props.comment.content
+  let content = string.split("\n").join(" ").split(" ").map(string => {return urlify(string)})
+  console.log(content, urlify(string))
 
   return (
     <div className="relative my-2 p-2 border rounded-lg bg-white hover:border-gray-600">
@@ -117,7 +125,7 @@ function Comment(props) {
       </div> : ""}
       <div>
         <Link to={"/users/" + props.comment.author}><p className="text-xs text-gray-600 cursor-pointer active:text-black hover:underline">{props.comment.author}</p></Link>
-        <p>{props.comment.content}</p>
+        <p>{content}</p>
         {props.comment.votes === 'disabled' ? '' : <Votes type="comment" loggedIn={loggedIn} replyFunc={toggleForm} content={props.comment} />} 
         {commentForm}
       </div>

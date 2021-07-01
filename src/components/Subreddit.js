@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from "react-router-dom"
+import { useParams, useHistory } from "react-router-dom"
 import { getPosts} from '../API/posts'
 import Post from './Post'
 import { getSubredditInfo } from '../API/subreddits'
@@ -12,6 +12,7 @@ function Subreddit() {
   const [loadingPosts, setLoadingPosts] = useState(true)
 
   const subreddit = useParams().subreddit
+  const history = useHistory()
 
   useEffect(() => {
     getPosts(subreddit).then(posts => {
@@ -30,6 +31,7 @@ function Subreddit() {
     setPosts(oldPosts)
     setLoadingPosts(true)
     setTimeout(()=>{setLoadingPosts(false)}, 100)
+    history.push("/"+subreddit)
   }
 
   return (
