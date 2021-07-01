@@ -100,11 +100,11 @@ function Header(props) {
     <div className="relative w-full text-center bg-white z-50">
       <div className="border-b-2 border-black w-full lg:w-3/5 mx-auto text-center flex flex-col md:flex-row justify-around filter drop-shadow-lg">
       <div className="w-full mt-1">
-        <NavLink to="/subreddits" activeClassName="text-red-400" className="hover:text-blue-600">Subreddits</NavLink>
+        <NavLink to="/subreddits" activeClassName="text-blue-600" className="hover:text-blue-600">Subreddits</NavLink>
       </div>  
         
       {/* Link to Home */}
-      <NavLink exact to="/" activeClassName="text-red-400" className="order-first md:order-none text-2xl w-full cursor-pointer hover:text-blue-600">Reddit</NavLink>
+      <NavLink exact to="/" activeClassName="text-blue-600" className="order-first md:order-none text-2xl w-full cursor-pointer hover:text-blue-600">Reddit</NavLink>
 
       {loggedIn ? 
       <div className="flex justify-around w-full opacity-100">

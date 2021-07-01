@@ -94,14 +94,14 @@ function Comments(props) {
   return (
     <div className="w-full lg:w-3/5 p-2 mx-auto justify-space-around bg-white striped">
       
-      <div className="flex flex-col lg:flex-row justify-between">
-        <div className="w-full lg:w-3/5 m-1">
+      <div className="flex flex-col my-2 lg:flex-row items-start justify-between">
+        <div className="w-full lg:w-3/5 mx-1">
           { loadingPost ? "loading post" :
-            <Post post={post} comments="disabled" />}
+            <Post post={post}  comments="disabled" />}
         </div>
 
-        <div className="border w-full lg:w-2/5 p-2 bg-white rounded-lg mb-3 hover:border-gray-400 shadow-lg">
-          <p className="text-center p-1">
+        <div className="border w-full h-auto lg:w-2/5 p-2 bg-white rounded-lg hover:border-gray-400 shadow-lg">
+          <p className="text-center text-2xl font-bold p-1">
           {`r/${subreddit}`}
           </p>
           {subInfo}

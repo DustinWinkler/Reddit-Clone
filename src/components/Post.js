@@ -106,10 +106,10 @@ function Post(props) {
     let width
     let maxWidth = 0
 
-    if (screenWidth < 800) {
-      maxWidth = parseInt(screenWidth * 0.7)
+    if (screenWidth < 1024) {
+      maxWidth = (props.comments === "disabled" ? parseInt(screenWidth * 0.7) : parseInt(screenWidth * 0.7))
     } else {
-      maxWidth = parseInt(screenWidth * 0.45)
+      maxWidth = (props.comments === "disabled" ? parseInt(screenWidth * 0.3) : parseInt(screenWidth * 0.45))
     }
 
     await fetch("https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=" + videoID)
@@ -145,7 +145,7 @@ function Post(props) {
   }
 
   return (
-    <div className="relative z-0 p-2 lg:p-3 my-3 border border-gray-200 hover:border-gray-400 bg-white rounded shadow-lg">
+    <div className="relative z-0 p-2 lg:p-3 mb-3 border border-gray-200 hover:border-gray-400 bg-white rounded shadow-lg">
       {canDelete ? <div onClick={compDeletePost} className="absolute top-2 right-5 fill-current text-red-600 cursor-pointer"> 
         <FontAwesomeIcon icon={faTrash} /> 
       </div> : ""}

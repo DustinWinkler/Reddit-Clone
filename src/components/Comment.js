@@ -4,6 +4,7 @@ import {LoggedInContext} from "../App"
 import Votes from './Votes'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
+import { Link } from 'react-router-dom'
 
 function Comment(props) {
   const [hasChildren, setHasChildren] = useState(false)
@@ -115,7 +116,7 @@ function Comment(props) {
         <FontAwesomeIcon icon={faTrash} /> 
       </div> : ""}
       <div>
-        <p className="text-xs text-gray-600 cursor-pointer active:text-black hover:underline">{props.comment.author}</p>
+        <Link to={"/users/" + props.comment.author}><p className="text-xs text-gray-600 cursor-pointer active:text-black hover:underline">{props.comment.author}</p></Link>
         <p>{props.comment.content}</p>
         {props.comment.votes === 'disabled' ? '' : <Votes type="comment" loggedIn={loggedIn} replyFunc={toggleForm} content={props.comment} />} 
         {commentForm}

@@ -27,7 +27,7 @@ function Posts(props) {
 	}, [subreddit])
 
 	const rAllPostingDisclaimer = (
-		<p className="w-full lg:w-3/5 bg-white mx-auto text-center -my-2 p-1 text-xs font-bold">
+		<p className="w-full lg:w-3/5 bg-white mx-auto text-center -mt-2 mb-2 p-1 text-xs font-bold">
 			You can create your own posts by going to the subreddit you would like to post in.
 		</p>
 	)

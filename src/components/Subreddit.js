@@ -38,7 +38,7 @@ function Subreddit() {
         r/{subreddit}
       </header>
 
-      <div className="p-1 w-screen md:w-3/5 mx-auto text-center">
+      <div className="p-1 md:w-3/5 mx-auto text-center">
         <p className="py-1 px-4 bg-white mx-auto border border-gray-400 rounded ">{subInfo}</p>
       </div>
 
