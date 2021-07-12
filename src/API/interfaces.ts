@@ -27,7 +27,7 @@ interface UserInterface {
   password: string
   posts: string[]
   upvotedIDs: string[]
-  username?: string
+  username: string
 }
 
 // need user, post pre/post id, ...

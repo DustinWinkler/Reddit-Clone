@@ -4,9 +4,10 @@ import{ addSubreddit, getAllSubreddits, subExists } from "../API/subreddits"
 import LoadingIcon from './LoadingIcon'
 import ToggleFormButton from './ToggleFormButton'
 import {LoggedInContext} from "../App"
+import { SubredditInterface } from '../API/interfaces'
 
 function Subreddits() {
-  const [subList, setSubList] = useState([])
+  const [subList, setSubList] = useState<SubredditInterface[]>([])
   const [loadingSubs, setLoadingSubs] = useState(true)
   const [showForm, setShowForm] = useState(false)
   const [formTitle, setFormTitle] = useState('')
@@ -25,15 +26,17 @@ function Subreddits() {
     setShowForm(!showForm)
   }
 
-  function handleTitleChange(e) {
-    setFormTitle(e.target.value)
+  function handleTitleChange(e: React.FormEvent) {
+    const target = e.target as HTMLInputElement
+    setFormTitle(target.value)
   }
 
-  function handleDescriptionChange(e) {
-    setFormDescription(e.target.value)
+  function handleDescriptionChange(e: React.FormEvent) {
+    const target = e.target as HTMLInputElement
+    setFormDescription(target.value)
   }
 
-  function handleSubmit(e) {
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
 
     subExists(formTitle).then(bool => {
@@ -72,7 +75,7 @@ function Subreddits() {
           <input className="border my-1 w-full rounded-lg p-2" onChange={handleTitleChange} value={formTitle} placeholder="Title" />
         </label>
         <label className="">
-          <textarea className="border my-1 w-full rounded-lg p-2" onChange={handleDescriptionChange} value={formDescription} placeholder="Description" rows="5" />
+          <textarea className="border my-1 w-full rounded-lg p-2" onChange={handleDescriptionChange} value={formDescription} placeholder="Description" rows={5} />
         </label>
         <input className="w-3/5 mx-auto p-1 border-2 border-blue-500 rounded-xl hover:bg-blue-500 hover:text-white hover:border-gray-600 cursor-pointer" type="submit" value="Submit" />
       </form>

@@ -5,13 +5,14 @@ import Post from './Post'
 import { getSubredditInfo } from '../API/subreddits'
 import LoadingIcon from './LoadingIcon'
 import PostForm from './PostForm'
+import { PostInterface } from '../API/interfaces'
 
 function Subreddit() {
   const [subInfo, setSubInfo] = useState('')
-  const [posts, setPosts] = useState([])
-  const [loadingPosts, setLoadingPosts] = useState(true)
+  const [posts, setPosts] = useState<PostInterface[]>()
+  const [loadingPosts, setLoadingPosts] = useState<boolean>(true)
 
-  const subreddit = useParams().subreddit
+  const subreddit = useParams<{subreddit: string}>().subreddit
   const history = useHistory()
 
   useEffect(() => {
@@ -23,10 +24,10 @@ function Subreddit() {
     getSubredditInfo(subreddit).then(info => {
       setSubInfo(info.toString())
     })
-  }, [])
+  }, [subreddit])
 
-  function addPostToState(post) {
-    let oldPosts = posts
+  function addPostToState(post: PostInterface) {
+    let oldPosts = posts!
     oldPosts.push(post)
     setPosts(oldPosts)
     setLoadingPosts(true)
@@ -48,7 +49,7 @@ function Subreddit() {
       <PostForm subreddit={subreddit} addPostToStateFunc={addPostToState} />
 
     <div className="transition-all duration-500 mx-auto w-full md:w-3/5 px-2">
-      {loadingPosts ? <LoadingIcon/> : posts.map(post => {return <Post key={post.id} post={post} />})}
+      {loadingPosts ? <LoadingIcon/> : posts!.map(post => {return <Post comments="enabled" key={post.id} post={post} />})}
     </div>
 
     </div>

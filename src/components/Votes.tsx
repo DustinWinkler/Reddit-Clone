@@ -4,14 +4,25 @@ import { incrementKarma as commentUp, decrementKarma as commentDown } from "../A
 import { incrementKarma as postUp, decrementKarma as postDown } from "../API/posts"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faLongArrowAltDown, faLongArrowAltUp, faReply } from '@fortawesome/free-solid-svg-icons'
+import { UserInterface } from '../API/interfaces'
 
-function Votes(props) {
-  const [netVotes, setNetVotes] = useState(props.content.votes)
+type VotesProps = {
+  loggedIn: boolean
+  content: {
+    votes: number
+    id: string
+  }
+  type: string
+  replyFunc: Function
+}
+
+function Votes(props: VotesProps) {
+  const [netVotes, setNetVotes] = useState<number>(props.content.votes)
   const loggedIn = props.loggedIn
-  const [userInfo, setUserInfo] = useState(JSON.parse(localStorage.getItem("userInfo")))
-  const [hasUpvoted, setHasUpvoted] = useState(false)
-  const [hasDownvoted, setHasDownvoted] = useState(false)
-  const [votingDisabled, setVotingDisabled] = useState(false)
+  const [userInfo, setUserInfo] = useState<UserInterface>(JSON.parse(localStorage.getItem("userInfo") as string))
+  const [hasUpvoted, setHasUpvoted] = useState<boolean>(false)
+  const [hasDownvoted, setHasDownvoted] = useState<boolean>(false)
+  const [votingDisabled, setVotingDisabled] = useState<boolean>(false)
 
 // check vote status
   useEffect(() => {
@@ -21,11 +32,11 @@ function Votes(props) {
     } else if (userInfo && userInfo.downvotedIDs.includes(props.content.id)) {
       setHasDownvoted(true)
     }
-  }, [])
+  }, [userInfo, props.content.id])
 
 
-  let karmaUp
-  let karmaDown
+  let karmaUp: Function
+  let karmaDown: Function
 
   if (props.type === 'post') {
     karmaUp = postUp
@@ -36,10 +47,10 @@ function Votes(props) {
   }
 
   function getUpdatedUser() {
-    setUserInfo(JSON.parse(localStorage.getItem("userInfo")))
+    setUserInfo(JSON.parse(localStorage.getItem("userInfo") as string))
   }
 
-  function setUpdatedUser(user) {
+  function setUpdatedUser(user: UserInterface) {
     localStorage.setItem("userInfo", JSON.stringify(user))
   }
 
@@ -136,7 +147,7 @@ function Votes(props) {
       <span onClick={upvote} className={ (hasUpvoted ? "fill-curret text-yellow-500 " : "fill-curret text-gray-500 ") + "mx-1 cursor-pointer rounded-full px-2 hover:bg-gray-300"}><FontAwesomeIcon icon={faLongArrowAltUp} /></span>
       <span>{netVotes}</span>
       <span onClick={downvote} className={ (hasDownvoted ? "fill-curret text-indigo-500 " : "fill-curret text-gray-500 ") + "mx-1 cursor-pointer rounded-full px-2 hover:bg-gray-300"}><FontAwesomeIcon icon={faLongArrowAltDown} /></span>
-      <span onClick={props.replyFunc} className="mx-1 cursor-pointer rounded-full px-2 hover:bg-gray-300 fill-curret text-blue-400"><FontAwesomeIcon icon={faReply} /></span>
+      <span onClick={()=>{props.replyFunc()}} className="mx-1 cursor-pointer rounded-full px-2 hover:bg-gray-300 fill-curret text-blue-400"><FontAwesomeIcon icon={faReply} /></span>
     </div>
   )
 }

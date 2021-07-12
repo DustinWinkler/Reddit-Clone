@@ -5,7 +5,8 @@ const emptyUser = {
   downvotedIDs: [],
   password: '',
   posts: [],
-  upvotedIDs: []
+  upvotedIDs: [],
+  username: ''
 }
 
 async function getUserInfo(username: string): Promise<UserInterface> {

@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
+import { PostInterface } from '../API/interfaces'
 import {getUserPosts, userExists} from "../API/users"
 import LoadingIcon from './LoadingIcon'
 import Post from './Post'
 // receive user id and show all their posts
 
 function UserProfile() {
-  const [posts, setPosts] = useState([])
-  const [doesUserExist, setDoesUserExists] = useState(false)
-  const [loadingPosts, setLoadingPosts] = useState(true)
-  const [postsEmpty, setPostsEmpty] = useState(true)
+  const [posts, setPosts] = useState<PostInterface[]>([])
+  const [doesUserExist, setDoesUserExists] = useState<boolean>(false)
+  const [loadingPosts, setLoadingPosts] = useState<boolean>(true)
+  const [postsEmpty, setPostsEmpty] = useState<boolean>(true)
 
-  const username = useParams().username
+  const username = useParams<{username: string}>().username
 
   // ATTEMPT TO ADD COMMENTS
 
@@ -20,7 +21,7 @@ function UserProfile() {
     userExists(username).then(bool => {
       if (bool) {setDoesUserExists(true)}
     })
-  }, [])
+  }, [username])
 
   // if user exists, get their posts
   useEffect(() => {
@@ -33,7 +34,7 @@ function UserProfile() {
         setLoadingPosts(false)
       }
     })
-  }, [doesUserExist])
+  }, [doesUserExist, username])
 
   let content
 
@@ -48,7 +49,7 @@ function UserProfile() {
   return (
     <div className="w-full lg:w-3/5 mx-auto">
       <p className="my-4 mx-auto w-3/5 text-center text-2xl font-bold">This is {username}'s Profile</p>
-      {loadingPosts ? <LoadingIcon /> : posts.map(post => {return <Post key={post.id} post={post} />})}
+      {loadingPosts ? <LoadingIcon /> : posts.map(post => {return <Post comments="enabled" key={post.id} post={post} />})}
       <p className="my-4 mx-auto w-3/5 text-center text-2xl font-bold">{content}</p>
     </div>
   )
