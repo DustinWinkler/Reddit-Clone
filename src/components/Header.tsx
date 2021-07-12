@@ -3,10 +3,12 @@ import { NavLink, useHistory } from "react-router-dom"
 import { createUser, usernamePasswordExists, userExists } from "../API/users"
 import { LoggedInContext } from '../App'
 
-// Link to r/all, logo center, sign in/ sign up/ sign out
-// receive signed in as prop
+type HeaderProps = {
+  signInFunc: Function,
+  signOutFunc: Function
+}
 
-function Header(props) {
+function Header(props: HeaderProps) {
   const [signingIn, setSigningIn] = useState(false)
   const [signingUp, setSigningUp] = useState(false)
   const [username, setUsername] = useState('')
@@ -17,23 +19,26 @@ function Header(props) {
   const loggedIn = useContext(LoggedInContext)
 
   useEffect(() => {
-    window.addEventListener('click', (e)=>{
-      if (e.target.id === 'form-bg') {
+    window.addEventListener('click', (e: Event)=>{
+      const target = e.target as HTMLDivElement
+      if (target.id === 'form-bg') {
         setSigningUp(false)
         setSigningIn(false)
       }
     })
   }, [])
 
-  function handleUsernameChange(e) {
-    setUsername(e.target.value)
+  function handleUsernameChange(e: React.FormEvent) {
+    const target = e.target as HTMLInputElement
+    setUsername(target.value)
   }
 
-  function handlePasswordChange(e) {
-    setPassword(e.target.value)
+  function handlePasswordChange(e: React.FormEvent) {
+    const target = e.target as HTMLInputElement
+    setPassword(target.value)
   }
 
-  function handleSignUp(e) {
+  function handleSignUp(e: React.FormEvent) {
     e.preventDefault()
 
     userExists(username).then(val => {
@@ -54,9 +59,9 @@ function Header(props) {
       <h1 className="mb-2 text-2xl">Sign Up</h1>
         <form className="block" onSubmit={handleSignUp}>
           <label className="block">Username</label>
-          <input className="border border-blue-600 rounded-lg p-1" value={username} onChange={handleUsernameChange} htmlFor="Username"></input>
+          <input className="border border-blue-600 rounded-lg p-1" value={username} onChange={handleUsernameChange} ></input>
           <label className="block">Password</label>
-          <input className="border border-blue-600 rounded-lg p-1" value={password} onChange={handlePasswordChange} htmlFor="Password"></input>
+          <input className="border border-blue-600 rounded-lg p-1" value={password} onChange={handlePasswordChange} ></input>
           <input className="block text-center mx-auto my-2 border-2 border-blue-600 py-1 px-3 rounded-xl cursor-pointer hover:text-white hover:bg-blue-400 text-black bg-white" type="submit" value="Submit" />
         </form>
       </div>
@@ -65,7 +70,7 @@ function Header(props) {
     </div>
   )
   
-  function handleSignIn(e) {
+  function handleSignIn(e: React.FormEvent) {
     e.preventDefault()
     
     usernamePasswordExists(username, password).then(val => {
@@ -85,9 +90,9 @@ function Header(props) {
       <h1 className="mb-2 text-2xl">Sign In</h1>
         <form className="block" onSubmit={handleSignIn}>
           <label className="block">Username</label>
-          <input className="border border-blue-600 rounded-lg p-1" value={username} onChange={handleUsernameChange} for="Username"></input>
+          <input className="border border-blue-600 rounded-lg p-1" value={username} onChange={handleUsernameChange} ></input>
           <label className="block">Password</label>
-          <input className="border border-blue-600 rounded-lg p-1" value={password} onChange={handlePasswordChange} for="Password"></input>
+          <input className="border border-blue-600 rounded-lg p-1" value={password} onChange={handlePasswordChange} ></input>
           <input className="block text-center mx-auto my-2 border-2 border-blue-600 py-1 px-3 rounded-xl cursor-pointer hover:text-white hover:bg-blue-400 text-black bg-white" type="submit" value="Submit" />
         </form>
       </div>

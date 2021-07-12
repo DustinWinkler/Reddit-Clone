@@ -1,17 +1,23 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect, useContext} from 'react'
 import { deleteComment, getChildComments, getComment, replyToComment } from '../API/comments'
 import {LoggedInContext} from "../App"
 import Votes from './Votes'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
+import { CommentInterface } from '../API/interfaces'
 
-function Comment(props) {
-  const [hasChildren, setHasChildren] = useState(false)
-  const [childComments, setChildComments] = useState([])
-  const [showForm, setShowForm] = useState(false)
-  const [formContent, setFormContent] = useState('')
-  const [canDelete, setCanDelete] = useState(false)
+type CommentProps = {
+  comment: CommentInterface
+  key: string
+}
+
+function Comment (props: CommentProps) {
+  const [hasChildren, setHasChildren] = useState<boolean>(false)
+  const [childComments, setChildComments] = useState<CommentInterface[]>([])
+  const [showForm, setShowForm] = useState<boolean>(false)
+  const [formContent, setFormContent] = useState<string>('')
+  const [canDelete, setCanDelete] = useState<boolean>(false)
 
   const loggedIn = useContext(LoggedInContext)
   
@@ -19,14 +25,14 @@ function Comment(props) {
   // check for children
   useEffect(() => {
     if (props.comment.comments.length > 0) setHasChildren(true)
-  }, [])
+  }, [props.comment.comments.length])
 
   // if children, get those comment objects and set them in order to nest them in this component
   useEffect(() => {
-    if (hasChildren) {
+    if (hasChildren && typeof props.comment.id === 'string') {
       getChildComments(props.comment.id).then(ids => {
-        let promises = []
-        let commentsToSet = []
+        let promises: Promise<CommentInterface>[] = []
+        let commentsToSet: CommentInterface[]
         ids.forEach(id => promises.push(getComment(id)))
         Promise.all(promises).then(comments => {
           comments.forEach(comment => commentsToSet.push(comment))
@@ -35,7 +41,7 @@ function Comment(props) {
       })
     }
     
-  }, [hasChildren])
+  }, [hasChildren, props.comment.id])
 
   // check if user is admin or original author
   useEffect(() => {
@@ -54,43 +60,47 @@ function Comment(props) {
       setCanDelete(true)
     }
 
-  }, [])
+  }, [props.comment.votes, props.comment.author])
 
   const commentForm = (
     <div className={(showForm ? "h-max max-h-32 " : "max-h-0 ") + "ml-2 overflow-hidden transition-all duration-500"}>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={(e: React.FormEvent) => {handleSubmit(e)}}>
         <label>
-          <textarea className="block py-1 px-2 border border-gray-300 rounded-lg w-4/5" value={formContent} placeholder="Comment." rows="3" onChange={handleChange} />
+          <textarea className="block py-1 px-2 border border-gray-300 rounded-lg w-4/5" value={formContent} placeholder="Comment." rows={3} onChange={(e: React.FormEvent) => {handleChange(e)}} />
         </label>
         <input className="w-max my-1 py-0 px-3 border-2 border-blue-500 rounded-lg hover:bg-blue-500 hover:text-white hover:border-gray-600 cursor-pointer" type="submit" value="Reply" />
       </form>
     </div>
   )
 
-  function handleChange(e) {
-    setFormContent(e.target.value)
+  function handleChange(e: React.FormEvent) {
+    const target = e.target as HTMLInputElement
+    if (target) {
+      setFormContent(target.value)
+    }
   }
 
-  async function handleSubmit(e) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!loggedIn) {
       alert("You must be logged in to comment.")
       return
     }
 
-    let comment = {
+    let comment: CommentInterface = {
       content: formContent,
       comments: [],
-      author: localStorage.getItem("curr_user"),
-      votes: 0
+      author: localStorage.getItem("curr_user") as string,
+      votes: 0,
+      id: ''
     }
 
-    let newCommentID
+    let newCommentID: string = ''
     await replyToComment(comment, props.comment.id).then(id => {newCommentID = id})
     comment["id"] = newCommentID
-    let children = childComments
+    let children = childComments as CommentInterface[]
     children.push(comment)
-    setChildComments(children)
+    setChildComments(children as never[])
     setShowForm(false)
   }
 
@@ -105,7 +115,7 @@ function Comment(props) {
     }
   }
 
-  function urlify(text) {
+  function urlify(text: string) {
     let urlRegex = /(https?:\/\/[^\s]+)/g
     if (urlRegex.test(text)) {
       return (<a className="text-blue-500 hover:text-blue-700" href={text}>{text}</a>)
@@ -132,8 +142,8 @@ function Comment(props) {
       
       <div className="ml-2 border-l-2 pl-2">
         
-        {childComments.length > 0 ? childComments.map(child => {
-          return <Comment loggedIn={loggedIn} key={child.id} comment={child} />
+        {childComments.length > 0 ? childComments.map((child: CommentInterface) => {
+          return <Comment key={child.id} comment={child} />
         }) : ""}
       </div>
     </div>

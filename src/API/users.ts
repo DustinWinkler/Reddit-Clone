@@ -1,5 +1,5 @@
 import {db} from '../firebase'
-import type {User} from './interfaces'
+import type {PostInterface, UserInterface} from './interfaces'
 
 const emptyUser = {
   downvotedIDs: [],
@@ -8,13 +8,13 @@ const emptyUser = {
   upvotedIDs: []
 }
 
-async function getUserInfo(username: string): Promise<User> {
-  let user: User = emptyUser
+async function getUserInfo(username: string): Promise<UserInterface> {
+  let user: UserInterface = emptyUser
   let userRef = db.collection("users").doc(username);
 
   await userRef.get().then((doc) => {
     if (doc.exists) {
-      user = doc.data()
+      user = doc.data() as UserInterface
       user["username"] = doc.id
     } else {
       console.log("No such document!");
@@ -26,7 +26,7 @@ async function getUserInfo(username: string): Promise<User> {
   return user
 }
 
-async function createUser(username: string, password: string) {
+async function createUser(username: string, password: string): Promise<void> {
   db.collection("users").doc(username).set({
     password: password,
     postkarma: 0,
@@ -36,8 +36,8 @@ async function createUser(username: string, password: string) {
   })
 }
 
-async function userExists(username: string) {
-  let user: User = await getUserInfo(username)
+async function userExists(username: string): Promise<boolean> {
+  let user: UserInterface = await getUserInfo(username)
 
   if (user.password) {
     return true
@@ -46,7 +46,7 @@ async function userExists(username: string) {
   }
 }
 
-async function usernamePasswordExists(username: string, password: string) {
+async function usernamePasswordExists(username: string, password: string): Promise<boolean> {
   let user = await getUserInfo(username)
   // if user exists
   if (user.password) {
@@ -61,19 +61,20 @@ async function usernamePasswordExists(username: string, password: string) {
   }
 }
 
-async function updateUser(username: string, user: object) {
+async function updateUser(username: string, user: object): Promise<void> {
   db.collection("users").doc(username).update(user)
 }
 
-async function getUserPosts(username: string) {
-  let posts: object[]
+async function getUserPosts(username: string): Promise<PostInterface[]> {
+  let posts: PostInterface[] = []
   await db.collection('posts').where('author', '==', username).get().then(query => {
     query.forEach(doc => {
-      let newPost = doc.data()
+      let newPost = doc.data() as PostInterface
       newPost['id'] = doc.id
       posts.push(newPost)
     })
-  }).then(()=>{return posts})
+  })
+  return posts
 }
 
 export { getUserInfo, createUser, usernamePasswordExists, userExists, updateUser, getUserPosts }

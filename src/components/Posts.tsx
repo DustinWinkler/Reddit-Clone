@@ -2,13 +2,16 @@ import React, { useState,useEffect } from 'react'
 import Post from "./Post";
 import { getPosts } from '../API/posts'
 import LoadingIcon from './LoadingIcon';
+import { PostInterface } from '../API/interfaces';
 
-//receive 'all' or subreddit name and create a Post for each post in given sub
+type PostsProps = {
+	subreddit: string
+}
  
-function Posts(props) {
-  const [posts, setPosts] = useState([])
-	const [subreddit, setSubreddit] = useState('')
-	const [loadingPosts, setLoadingPosts] = useState(true)
+function Posts(props: PostsProps) {
+  const [posts, setPosts] = useState<PostInterface[]>([])
+	const [subreddit, setSubreddit] = useState<string>('')
+	const [loadingPosts, setLoadingPosts] = useState<boolean>(true)
 	
 	// set subreddit then getposts
 	useEffect(() => {
@@ -17,12 +20,12 @@ function Posts(props) {
 		} else {
 			setSubreddit(props.subreddit)
 		}
-	}, [])
+	}, [props.subreddit])
 
 	useEffect(() => {
 		getPosts(subreddit).then(val => {
 			setPosts(val)
-			setTimeout(setLoadingPosts(false), 500)
+			setTimeout(()=>{setLoadingPosts(false)}, 500)
 		})
 	}, [subreddit])
 
@@ -37,7 +40,7 @@ function Posts(props) {
 			{subreddit === 'all' || '' ? rAllPostingDisclaimer : ''}
 
       { loadingPosts ? <LoadingIcon/> :
-			posts.map(post => {return (<Post key={post.id} post={post} />)
+			posts.map((post: PostInterface) => {return (<Post comments={"enabled"} key={post.id} post={post} />)
       })}
     </div>
   )

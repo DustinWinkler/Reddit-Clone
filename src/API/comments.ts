@@ -1,14 +1,15 @@
 import firebase from "firebase/app"
 import {db} from '../firebase'
 import {appendComment, getPost} from "./posts"
-import type {Comment, Post} from './interfaces'
+import type {CommentInterface, PostInterface} from './interfaces'
 
 const emptyComment = {
   author: "",
   comments: [],
   content: '',
   title: '',
-  votes: 0
+  votes: 0,
+  id: ''
 }
 
 const emptyPost = {
@@ -18,23 +19,24 @@ const emptyPost = {
   subreddit: '',
   title: '',
   type: 'Text',
-  votes: 0
+  votes: 0,
+  id: ''
 }
 
-async function getComment(commentID: string) {
-  let comment: Comment = emptyComment
+async function getComment(commentID: string): Promise<CommentInterface> {
+  let comment: CommentInterface = emptyComment
 
   await db.collection("comments").doc(commentID).get().then(doc => {
     console.log("comments exists? ", commentID, doc.exists)
-    comment = doc.data()
+    comment = doc.data() as CommentInterface
     comment['id'] = doc.id
   })
   return comment
 }
 
-async function getTopLevelCommentIDs(postID: string) {
+async function getTopLevelCommentIDs(postID: string): Promise<string[]> {
   let ids: string[] = emptyPost.comments
-  let post = await getPost(postID)
+  let post: PostInterface = await getPost(postID)
   
   post.comments.forEach(comment => {
     ids.push(comment)
@@ -42,11 +44,11 @@ async function getTopLevelCommentIDs(postID: string) {
   return ids
 }
 
-async function getChildComments(commentID: string) {
+async function getChildComments(commentID: string): Promise<string[]> {
   let ids: string[] = emptyComment.comments
-  let comment: Comment = emptyComment
+  let comment: CommentInterface = emptyComment
   await db.collection("comments").doc(commentID).get().then(doc => {
-    comment = doc.data()
+    comment = doc.data() as CommentInterface
   })
   
   if (comment) {
@@ -58,7 +60,7 @@ async function getChildComments(commentID: string) {
   return ids
 }
 
-async function hasChildren(commentID: string) {
+async function hasChildren(commentID: string): Promise<boolean> {
   let bool = false
   let comment = await getComment(commentID)
   if(comment.comments.length > 0) {
@@ -67,15 +69,15 @@ async function hasChildren(commentID: string) {
   return bool
 }
 
-async function incrementKarma(commentID: string, num: number) {
-  let comment: Comment = await getComment(commentID)
+async function incrementKarma(commentID: string, num: number): Promise<void> {
+  let comment: CommentInterface = await getComment(commentID)
  
   db.collection("comments").doc(commentID).update({
     votes: comment.votes + num
   })
 }
 
-async function decrementKarma(commentID: string, num: number) {
+async function decrementKarma(commentID: string, num: number): Promise<void> {
   let comment = await getComment(commentID)
 
   db.collection("comments").doc(commentID).update({
@@ -83,15 +85,15 @@ async function decrementKarma(commentID: string, num: number) {
   })
 }
 
-function createComment(comment: object, postID: string) {
+function createComment(comment: object, postID: string): void {
   db.collection("comments").add(comment).then(docRef => {
     appendComment(postID, docRef.id)
   })
 }
 
-async function replyToComment(comment: Comment, idToReplyTo: string) {
+async function replyToComment(comment: CommentInterface, idToReplyTo: string): Promise<string> {
   // call create comment then append its id to reply
-  let newID
+  let newID: string = ''
   await db.collection("comments").add({
     content: comment.content,
     author: comment.author,
@@ -108,7 +110,7 @@ async function replyToComment(comment: Comment, idToReplyTo: string) {
 }
 
 // use new Promise to force waiting for all children
-async function getTotalComments(postID: string) {
+async function getTotalComments(postID: string): Promise<number> {
   
   async function checkChildren(commentID: string) {
     let children = []
@@ -125,7 +127,7 @@ async function getTotalComments(postID: string) {
     }
   }
 
-  let post: Post = emptyPost
+  let post: PostInterface = emptyPost
   let commentCount = 0
   await getPost(postID).then(response => {
     post = response
@@ -139,14 +141,14 @@ async function getTotalComments(postID: string) {
   return commentCount
 }
 
-function deleteComment(commentID: string) {
+function deleteComment(commentID: string): void {
   db.collection("comments").doc(commentID).update({
     votes: 0.5,
     content: "[deleted]"
   })
 }
 
-function hardDelete(commentID: string) {
+function hardDelete(commentID: string): void {
   db.collection("comments").doc(commentID).delete().then(() => {
     console.log("Comment successfully deleted!");
   }).catch((error: Error) => {

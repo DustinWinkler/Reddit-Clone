@@ -1,7 +1,7 @@
 import {db, storage} from "../firebase"
 import firebase from "firebase/app"
 import { hardDelete } from "./comments"
-import type {Post} from './interfaces'
+import type {PostInterface} from './interfaces'
 
 const emptyPost = {
   author: "",
@@ -10,34 +10,36 @@ const emptyPost = {
   subreddit: '',
   title: '',
   type: 'Text',
-  votes: 0
+  votes: 0,
+  id: ''
 }
 
-async function getPosts(subreddit: string) {
-  let posts: object[]
+async function getPosts(subreddit: string): Promise<PostInterface[]> {
+  let posts: PostInterface[] = []
   if (subreddit === 'all' || subreddit === "") {
     await db.collection('posts').get().then(query => {
       query.forEach(doc => {
-        let newPost = doc.data()
+        let newPost = doc.data() as PostInterface
         newPost['id'] = doc.id
         posts.push(newPost)
       })
-    }).then(()=>{return posts})
+    })
   } else {
     await db.collection('posts').where('subreddit', '==', subreddit).get().then(query => {
       query.forEach(doc => {
-        let newPost = doc.data()
+        let newPost = doc.data() as PostInterface
         newPost['id'] = doc.id
         posts.push(newPost)
       })
-    }).then(()=>{return posts})
+    })
   }
+  return posts
 }
 
-async function getPost(postID: string): Promise<Post> {
-  let post: Post = emptyPost
+async function getPost(postID: string): Promise<PostInterface> {
+  let post: PostInterface = emptyPost
   await db.collection("posts").doc(postID).get().then(doc => {
-    post = doc.data()
+    post = doc.data() as PostInterface
     post["id"] = doc.id
   })
   return post
@@ -59,8 +61,8 @@ async function decrementKarma(postID: string, num: number): Promise<void> {
   })
 }
 
-async function addPost(post: object) {
-  let newID
+async function addPost(post: object): Promise<string> {
+  let newID: string = ''
   await db.collection("posts").add(post).then(docRef => {
     newID = docRef.id
   })
@@ -73,8 +75,8 @@ function appendComment(postID: string, commentID: string) {
   })
 }
 
-async function deletePost(postID: string) {
-  let post:Post = await getPost(postID)
+async function deletePost(postID: string): Promise<void> {
+  let post:PostInterface = await getPost(postID)
 
   for (const commentID of post.comments) {
     hardDelete(commentID)
@@ -85,13 +87,13 @@ async function deletePost(postID: string) {
 
 }
 
-async function uploadFile(file: File) {
+async function uploadFile(file: File): Promise<void> {
   storage.ref().child(file.name).put(file).then(snapshot => {
-    console.log("uploaded file")
+    console.log("Uploaded file")
   })
 }
 
-async function getFileUrl(filename: string) {
+async function getFileUrl(filename: string): Promise<string> {
   let returnUrl = ''
   await storage.ref().child(filename).getDownloadURL().then(url => {
     returnUrl = url
@@ -100,7 +102,7 @@ async function getFileUrl(filename: string) {
   return returnUrl
 }
 
-async function deleteFile(filename: string) {
+async function deleteFile(filename: string): Promise<void> {
   storage.ref().child(filename).delete()
 }
 

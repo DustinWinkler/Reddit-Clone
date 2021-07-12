@@ -1,67 +1,44 @@
-import React, {useState, useEffect, useContext} from 'react'
+import React, {useState, useEffect, useContext, useMemo, ReactElement} from 'react'
 import ToggleFormButton from './ToggleFormButton'
 import { LoggedInContext } from '../App'
 import {addPost, uploadFile} from "../API/posts"
+import { PostInterface } from '../API/interfaces'
 
-// change fields based on type props
-// need text type
-// need image and video link types
-// upload image/video types???
+type PostFormProps = {
+  subreddit: string
+  addPostToStateFunc: Function
+}
 
-function PostForm(props) {
-  const [showForm, setShowForm] = useState(false)
-  const [formType, setFormType] = useState("Text")
-  const [formInput, setFormInput] = useState('')
-  const [formTitle, setFormTitle] = useState('')
-  const [formContent, setFormContent] = useState('')
-  const [formFile, setFormFile] = useState()
+function PostForm(props: PostFormProps) {
+  const [showForm, setShowForm] = useState<boolean>(false)
+  const [formType, setFormType] = useState<string>("Text")
+  const [formInput, setFormInput] = useState<ReactElement>()
+  const [formTitle, setFormTitle] = useState<string>('')
+  const [formContent, setFormContent] = useState<string>('')
+  const [formFile, setFormFile] = useState<File>()
 
   const loggedIn = useContext(LoggedInContext)
 
-  useEffect(() => {
-    if (formType === 'Text') {setFormInput(textInput)}
-    else if (formType === 'Video' || formType === 'Image') {setFormInput(uploadInput)}
-    else if (formType === 'Link') {setFormInput(linkInput)}
-  }, [formType])
+  const textInput = useMemo<ReactElement>(() => {
+    return (<label className="">
+      <textarea className="border my-1 w-full rounded-lg p-2" value={formContent} onChange={handleContentChange} placeholder="Content" rows={5} />
+    </label>)
+  }, [formContent])
 
-  const uploadInput = (
-    <label className="my-2">
+  const uploadInput = useMemo<ReactElement>(() => {
+    return (<label className="my-2">
       <input type="file" onChange={handleFileChange} />
-    </label>
-  )
+    </label>)
 
-  const linkInput = (
-    <label className="my-2">
-      <p>Youtube Links will be embedded nicely :)</p>
-      <input type="text" placeholder="Video, Image, News, etc." defaultInputValue={formContent} onChange={handleContentChange} className="border my-1 w-full rounded-lg p-2" />
-    </label>
-  )
+  function handleFileChange(e: React.FormEvent) {
+    const target = e.target as HTMLInputElement
+    let file: File
 
-  const textInput = (
-    <label className="">
-      <textarea className="border my-1 w-full rounded-lg p-2" defaultInputValue={formContent} onChange={handleContentChange} placeholder="Content" rows="5" />
-    </label>
-  )
-
-  function switchType(type) {
-    setFormType(type)
-  }
-
-  function handleTitleChange(e) {
-    setFormTitle(e.target.value)
-  }
-
-  function handleContentChange(e) {
-    setFormContent(e.target.value)
-  }
-
-  // return random number for the purpose of uniquely naming files uploaded
-  function randomNumber() {
-    return Math.floor(100000 + Math.random() * 900000)
-  }
-
-  function handleFileChange(e) {
-    let file = e.target.files[0]
+    if (target.files) {
+      file = target.files[0]
+    } else {
+      return
+    }
 
     if (file.size > 10000000) {
       alert("File size cannot exceed 10 MB")
@@ -83,12 +60,45 @@ function PostForm(props) {
 
     console.log("updated file -> ", file)
   }
+  }, [])
+
+  const linkInput = useMemo<ReactElement>(() => {
+    return (<label className="my-2">
+      <p>Youtube Links will be embedded nicely :)</p>
+      <input type="text" placeholder="Video, Image, News, etc." value={formContent} onChange={handleContentChange} className="border my-1 w-full rounded-lg p-2" />
+    </label>)
+  }, [formContent])
+
+  useEffect(() => {
+    if (formType === 'Text') {setFormInput(textInput)}
+    else if (formType === 'Video' || formType === 'Image') {setFormInput(uploadInput)}
+    else if (formType === 'Link') {setFormInput(linkInput)}
+  }, [formType, linkInput, textInput, uploadInput])
+
+  function switchType(type: string) {
+    setFormType(type)
+  }
+
+  function handleTitleChange(e: React.FormEvent) {
+    const target = e.target as HTMLInputElement
+    setFormTitle(target.value)
+  }
+
+  function handleContentChange(e: React.FormEvent) {
+    const target = e.target as HTMLInputElement
+    setFormContent(target.value)
+  }
+
+  // return random number for the purpose of uniquely naming files uploaded
+  function randomNumber() {
+    return Math.floor(100000 + Math.random() * 900000)
+  }
 
   function toggleForm() {
     setShowForm(!showForm)
   }
 
-  function handleSubmit(e) {
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
 
     if (!loggedIn) {
@@ -108,17 +118,21 @@ function PostForm(props) {
       }
     }
 
-    let post = {
-      author: localStorage.getItem("curr_user"),
+    let post: PostInterface = {
+      author: localStorage.getItem("curr_user") as string,
       comments: [],
+      content: '',
       subreddit: props.subreddit,
       title: formTitle,
       votes: 0,
-      type: formType
+      type: formType,
+      id: ''
     }
 
     if (formType === "Image" || formType === "Video") {
-      post.fileUrl = formFile.name
+      if(formFile) {
+        post.content = formFile.name
+      }
     } else {
       post.content = formContent
     }
@@ -128,7 +142,7 @@ function PostForm(props) {
       props.addPostToStateFunc(post)
       setShowForm(false)
 
-      if (formType === "Image" || formType === "Video") {
+      if ((formType === "Image" || formType === "Video") && formFile) {
         uploadFile(formFile)
         // window.location.reload
       }

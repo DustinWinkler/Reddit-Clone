@@ -1,27 +1,28 @@
-interface Post {
+interface PostInterface {
   author: string
   comments: string[]
-  content: string | File
+  content: string
   subreddit: string
   title: string
   type: string
   votes: number
-  id?: string
+  id: string
 }
 
-interface Comment {
+interface CommentInterface {
   author: string
   comments: string[]
   content: string
   votes: number
-  id?: string
+  id: string
 }
 
-interface Subreddit {
-  description: string
+interface SubredditInterface {
+  description: string,
+  id: string
 }
 
-interface User {
+interface UserInterface {
   downvotedIDs: string[]
   password: string
   posts: string[]
@@ -31,4 +32,4 @@ interface User {
 
 // need user, post pre/post id, ...
 
-export type {Post, Comment, Subreddit, User }
+export type {PostInterface, CommentInterface, SubredditInterface, UserInterface }
