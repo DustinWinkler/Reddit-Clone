@@ -8,7 +8,8 @@ import Subreddit from './components/Subreddit'
 import UserProfile from './components/UserProfile'
 import { getUserInfo } from "./API/users"
 
-export const LoggedInContext = createContext()
+let bool = localStorage.getItem("curr_user") ? true : false
+export const LoggedInContext = createContext(bool)
 
 function App() {
   const [userSignedIn, setUserSignedIn] = useState(false)
@@ -18,7 +19,8 @@ function App() {
   useEffect(() => {
     // check if signed in, if true, set the state to be so
     if(localStorage.getItem("curr_user") !== null) {
-      signIn(localStorage.getItem("curr_user"))
+      let username = localStorage.getItem("curr_user")
+      if (typeof username === 'string') {signIn(username)}
     }
   }, [])
 
@@ -28,7 +30,7 @@ function App() {
     history.push("/")
   }
 
-  function signIn(username) {
+  function signIn(username: string) {
     localStorage.setItem('curr_user', username)
     getUserInfo(username).then(user => localStorage.setItem("userInfo", JSON.stringify(user)))
     setUserSignedIn(true)

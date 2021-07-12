@@ -1,7 +1,15 @@
 import {db} from '../firebase'
+import type {User} from './interfaces'
 
-async function getUserInfo(username) {
-  let user = {}
+const emptyUser = {
+  downvotedIDs: [],
+  password: '',
+  posts: [],
+  upvotedIDs: []
+}
+
+async function getUserInfo(username: string): Promise<User> {
+  let user: User = emptyUser
   let userRef = db.collection("users").doc(username);
 
   await userRef.get().then((doc) => {
@@ -12,16 +20,14 @@ async function getUserInfo(username) {
       console.log("No such document!");
     }
   }).catch((error) => {
-      console.log("Error getting document:", error);
-  });
+    console.log("Error getting document:", error);
+})
 
   return user
-
 }
 
-async function createUser(username, password) {
+async function createUser(username: string, password: string) {
   db.collection("users").doc(username).set({
-    commentkarma: 0,
     password: password,
     postkarma: 0,
     posts: [],
@@ -30,8 +36,8 @@ async function createUser(username, password) {
   })
 }
 
-async function userExists(username) {
-  let user = await getUserInfo(username)
+async function userExists(username: string) {
+  let user: User = await getUserInfo(username)
 
   if (user.password) {
     return true
@@ -40,7 +46,7 @@ async function userExists(username) {
   }
 }
 
-async function usernamePasswordExists(username, password) {
+async function usernamePasswordExists(username: string, password: string) {
   let user = await getUserInfo(username)
   // if user exists
   if (user.password) {
@@ -55,20 +61,19 @@ async function usernamePasswordExists(username, password) {
   }
 }
 
-async function updateUser(username, user) {
+async function updateUser(username: string, user: object) {
   db.collection("users").doc(username).update(user)
 }
 
-async function getUserPosts(username) {
-  let posts = []
+async function getUserPosts(username: string) {
+  let posts: object[]
   await db.collection('posts').where('author', '==', username).get().then(query => {
     query.forEach(doc => {
       let newPost = doc.data()
       newPost['id'] = doc.id
       posts.push(newPost)
     })
-  })
-  return posts
+  }).then(()=>{return posts})
 }
 
 export { getUserInfo, createUser, usernamePasswordExists, userExists, updateUser, getUserPosts }

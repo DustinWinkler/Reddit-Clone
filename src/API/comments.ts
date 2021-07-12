@@ -1,9 +1,28 @@
 import firebase from "firebase/app"
 import {db} from '../firebase'
 import {appendComment, getPost} from "./posts"
+import type {Comment, Post} from './interfaces'
 
-async function getComment(commentID) {
-  let comment = {}
+const emptyComment = {
+  author: "",
+  comments: [],
+  content: '',
+  title: '',
+  votes: 0
+}
+
+const emptyPost = {
+  author: "",
+  comments: [],
+  content: '',
+  subreddit: '',
+  title: '',
+  type: 'Text',
+  votes: 0
+}
+
+async function getComment(commentID: string) {
+  let comment: Comment = emptyComment
 
   await db.collection("comments").doc(commentID).get().then(doc => {
     console.log("comments exists? ", commentID, doc.exists)
@@ -13,8 +32,8 @@ async function getComment(commentID) {
   return comment
 }
 
-async function getTopLevelCommentIDs(postID) {
-  let ids = []
+async function getTopLevelCommentIDs(postID: string) {
+  let ids: string[] = emptyPost.comments
   let post = await getPost(postID)
   
   post.comments.forEach(comment => {
@@ -23,20 +42,23 @@ async function getTopLevelCommentIDs(postID) {
   return ids
 }
 
-async function getChildComments(commentID) {
-  let ids = []
-  let comment
+async function getChildComments(commentID: string) {
+  let ids: string[] = emptyComment.comments
+  let comment: Comment = emptyComment
   await db.collection("comments").doc(commentID).get().then(doc => {
     comment = doc.data()
   })
-  comment.comments.forEach(comment => {
-    ids.push(comment)
-  })
+  
+  if (comment) {
+    comment.comments.forEach(comment => {
+      ids.push(comment)
+    })
+  }
 
   return ids
 }
 
-async function hasChildren(commentID) {
+async function hasChildren(commentID: string) {
   let bool = false
   let comment = await getComment(commentID)
   if(comment.comments.length > 0) {
@@ -45,15 +67,15 @@ async function hasChildren(commentID) {
   return bool
 }
 
-async function incrementKarma(commentID, num) {
-  let comment = await getComment(commentID)
+async function incrementKarma(commentID: string, num: number) {
+  let comment: Comment = await getComment(commentID)
  
   db.collection("comments").doc(commentID).update({
     votes: comment.votes + num
   })
 }
 
-async function decrementKarma(commentID, num) {
+async function decrementKarma(commentID: string, num: number) {
   let comment = await getComment(commentID)
 
   db.collection("comments").doc(commentID).update({
@@ -61,13 +83,13 @@ async function decrementKarma(commentID, num) {
   })
 }
 
-function createComment(comment, postID) {
+function createComment(comment: object, postID: string) {
   db.collection("comments").add(comment).then(docRef => {
     appendComment(postID, docRef.id)
   })
 }
 
-async function replyToComment(comment, idToReplyTo) {
+async function replyToComment(comment: Comment, idToReplyTo: string) {
   // call create comment then append its id to reply
   let newID
   await db.collection("comments").add({
@@ -86,9 +108,9 @@ async function replyToComment(comment, idToReplyTo) {
 }
 
 // use new Promise to force waiting for all children
-async function getTotalComments(postID) {
+async function getTotalComments(postID: string) {
   
-  async function checkChildren(commentID) {
+  async function checkChildren(commentID: string) {
     let children = []
     let bool = await hasChildren(commentID)
     if (bool) {
@@ -103,7 +125,7 @@ async function getTotalComments(postID) {
     }
   }
 
-  let post = {}
+  let post: Post = emptyPost
   let commentCount = 0
   await getPost(postID).then(response => {
     post = response
@@ -117,17 +139,17 @@ async function getTotalComments(postID) {
   return commentCount
 }
 
-function deleteComment(commentID) {
+function deleteComment(commentID: string) {
   db.collection("comments").doc(commentID).update({
-    votes: "disabled",
+    votes: 0.5,
     content: "[deleted]"
   })
 }
 
-function hardDelete(commentID) {
-  db.collection("comments").dic(commentID).delete().then(() => {
+function hardDelete(commentID: string) {
+  db.collection("comments").doc(commentID).delete().then(() => {
     console.log("Comment successfully deleted!");
-  }).catch((error) => {
+  }).catch((error: Error) => {
       console.error("Error removing comment: ", error);
   });
 

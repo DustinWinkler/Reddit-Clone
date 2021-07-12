@@ -34,7 +34,7 @@ function Post(props) {
 
   // get total comments for post preview i.e (4 comments)
   useEffect(() => {
-    if (props.comments !== 'disabled') {
+    if (props.comments !== "disabled") {
       getTotalComments(props.post.id).then(count => {
         setCommentCount(count)
         setLoadingContent(false)

@@ -44,7 +44,7 @@ function Comment(props) {
 
     if (username === null) {return}
 
-    if (props.comment.votes === 'disabled') {return}
+    if (props.comment.votes === 0.5) {return}
 
     if (username === author) {
       setCanDelete(true)
@@ -126,7 +126,7 @@ function Comment(props) {
       <div>
         <Link to={"/users/" + props.comment.author}><p className="text-xs text-gray-600 cursor-pointer active:text-black hover:underline">{props.comment.author}</p></Link>
         <p>{content}</p>
-        {props.comment.votes === 'disabled' ? '' : <Votes type="comment" loggedIn={loggedIn} replyFunc={toggleForm} content={props.comment} />} 
+        {props.comment.votes === 0.5 ? '' : <Votes type="comment" loggedIn={loggedIn} replyFunc={toggleForm} content={props.comment} />} 
         {commentForm}
       </div>
       

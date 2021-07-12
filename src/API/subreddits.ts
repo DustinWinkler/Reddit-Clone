@@ -1,7 +1,7 @@
 import {db} from "../firebase"
 
 async function getAllSubreddits() {
-  let subs = []
+  let subs: object[]
 
   await db.collection("subreddits").get().then(query => {
     query.forEach(doc => {
@@ -9,27 +9,28 @@ async function getAllSubreddits() {
       sub["id"] = doc.id
       subs.push(sub)
     })
-  })
-  return subs
+  }).then(()=>{return subs})
 }
 
-async function getSubredditInfo(subredditName) {
+async function getSubredditInfo(subredditName: string) {
   let content = ""
 
   await db.collection("subreddits").doc(subredditName).get().then(doc => {
     let subreddit = doc.data()
-    content = subreddit.description
+    if (subreddit) {
+      content = subreddit.description
+    }
   })
   return content
 }
 
-async function addSubreddit(title, description) {
+async function addSubreddit(title: string, description: string) {
   db.collection("subreddits").doc(title).set({
     description: description
   })
 }
 
-async function subExists(title) {
+async function subExists(title: string) {
   let bool = false
   await db.collection("subreddits").doc(title).get().then(doc => {
     if (doc.exists) {bool = true}
