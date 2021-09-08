@@ -8,3 +8,4 @@ const mongodb = mongoose.connection
 mongodb.on('error', console.error.bind(console, 'MongoDB connection error: '))
 
 // Comments migration
+

@@ -1,12 +1,12 @@
-// ROUTES AND CONTROLLERS
-
-import express from 'express';
-var router = express.Router();
 import Post from '../models/posts.js'
 import User from '../models/users.js'
 import Comment from '../models/comments.js'
 import passport from 'passport'
 import bcrypt from 'bcrypt'
+
+import express from 'express';
+var router = express.Router();
+// ROUTES AND CONTROLLERS
 
 // ------------ POSTS ----------------
 
