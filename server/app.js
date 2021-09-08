@@ -8,13 +8,14 @@ import { Strategy as jwtStrategy, ExtractJwt } from 'passport-jwt';
 import { Strategy as localStrategy } from 'passport-local'
 import User from './models/users.js';
 import bcrypt from 'bcrypt'
+import indexRouter from './routes/index.js';
+import passport from 'passport';
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 dotenv.config({ path: __dirname+'/.env'})
 
-import indexRouter from './routes/index.js';
-import passport from 'passport';
+
 
 const app = express();
 
