@@ -7,8 +7,10 @@ const Schema = mongoose.Schema
 const UserSchema = new Schema ({
   username: {type: String, required: true, minLength: 3, unique: true},
   password: {type: String, required: true, minLength: 3, unique: true},
-  author: {type: Schema.Types.ObjectId, ref: 'User'},
-  isAdmin: Boolean
+  upvotedIDs: [{type: Schema.Types.ObjectId, ref: 'Post'}],
+  downvotedIDs: [{type: Schema.Types.ObjectId, ref: 'Post'}],
+  oldUpIDs: [String],
+  oldDownIDs: [String]
 })
 
 UserSchema.methods.generateAuthToken = function() {

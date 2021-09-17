@@ -5,10 +5,13 @@ const Schema = mongoose.Schema
 const PostSchema = new Schema ({
   title: String,
   content: String,
+  votes: Number,
   author: {type: Schema.Types.ObjectId, ref: 'User'},
   comments: [{type: Schema.Types.ObjectId, ref: 'Comment'}],
   subreddit: {type: Schema.Types.ObjectId, ref: 'Subreddit'},
-  type: {type: String, enum: ['Link', 'Image', 'Video', 'Text']}
+  type: {type: String, enum: ['Link', 'Image', 'Video', 'Text']},
+  oldID: String,
+  oldCommentIDs: [String]
 }, {timestamps: true})
 
 const Post = mongoose.model('Post', PostSchema)

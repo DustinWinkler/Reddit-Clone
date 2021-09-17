@@ -10,14 +10,26 @@ import User from './models/users.js';
 import bcrypt from 'bcrypt'
 import indexRouter from './routes/index.js';
 import passport from 'passport';
+import { ApolloServer } from 'apollo-server-express';
+import Schemas from './gql/schemas.js';
+import resolvers from './gql/resolvers.js';
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 dotenv.config({ path: __dirname+'/.env'})
 
+const server = new ApolloServer({
+  typeDefs: Schemas,
+  resolvers,
+  context: async ({ req }) => {
+    // do curr_user stuff and add mongo models
+  }
+})
 
+await server.start()
 
 const app = express();
+server.applyMiddleware({ app, path: '/graphql'})
 
 const mongoDB = process.env.MONGO_URL
 mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true})
@@ -96,5 +108,9 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 404);
   res.json(err);
 });
+
+app.listen({ port: 4000 }, () =>
+  console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`)
+);
 
 export default app;
