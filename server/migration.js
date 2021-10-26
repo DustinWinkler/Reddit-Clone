@@ -121,6 +121,27 @@ async function migrateComments() {
 }
 //migrateComments()
 
+// Comments on Posts conversion
+
+async function convertCommentsOnPosts() {
+  Post.find({}).then(posts => {
+    posts.forEach(async (post) => {
+      post.comments = []
+
+      await Promise.all(post.oldCommentIDs.map(async (id) => {
+        const fireComment = (await getDoc(doc(db, 'comments', id))).data()
+        const mongoComment = await Comment.findOne({content: fireComment.content})
+        post.comments = [...post.comments, mongoComment._id]
+        console.log('in progress', post.comments);
+      }))
+      post.oldCommentIDs = undefined
+      console.log('done', post.comments);
+      post.save()
+    })
+  })
+}
+convertCommentsOnPosts()
+
 // Comments on comments conversion from old ids
 
 async function convertNestedComments() {

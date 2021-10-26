@@ -1,66 +1,74 @@
-import React, { useState, useEffect, useContext} from 'react'
-import { deleteComment, getChildComments, getComment, replyToComment } from '../API/comments'
+import React, { useState, useEffect, useContext, FC, ReactElement} from 'react'
 import {LoggedInContext} from "../App"
 import Votes from './Votes'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
-import { CommentInterface } from '../API/interfaces'
+import { useMutation, useQuery } from '@apollo/client'
+import { COMMENT, CURRENT_USER_DETAILS } from '../GraphQL/queries'
+import { CREATE_COMMENT, DELETE_COMMENT } from '../GraphQL/mutations'
+import LoadingIcon from './LoadingIcon'
 
 type CommentProps = {
-  comment: CommentInterface
-  key: string
+  commentID: string
 }
 
-function Comment (props: CommentProps) {
-  const [hasChildren, setHasChildren] = useState<boolean>(false)
-  const [childComments, setChildComments] = useState<CommentInterface[]>([])
+const Comment: FC<CommentProps> = ({ commentID }) => {
   const [showForm, setShowForm] = useState<boolean>(false)
   const [formContent, setFormContent] = useState<string>('')
   const [canDelete, setCanDelete] = useState<boolean>(false)
+  const [commentContent, setCommentContent] = useState<string | ReactElement>('')
 
   const loggedIn = useContext(LoggedInContext)
-  
-  
-  // check for children
-  useEffect(() => {
-    if (props.comment.comments.length > 0) setHasChildren(true)
-  }, [props.comment.comments.length])
 
-  // if children, get those comment objects and set them in order to nest them in this component
-  useEffect(() => {
-    if (hasChildren && typeof props.comment.id === 'string') {
-      getChildComments(props.comment.id).then(ids => {
-        let promises: Promise<CommentInterface>[] = []
-        let commentsToSet: CommentInterface[]
-        ids.forEach(id => promises.push(getComment(id)))
-        Promise.all(promises).then(comments => {
-          comments.forEach(comment => commentsToSet.push(comment))
-          setChildComments(commentsToSet.sort((a, b) => b.votes - a.votes))
-        })
-      })
+  const { data: userData, loading: userLoading } = useQuery(CURRENT_USER_DETAILS, {
+    fetchPolicy: "network-only"
+  })
+
+  const { loading, error, data } = useQuery(COMMENT, {
+    variables: {
+      ID: commentID
     }
-    
-  }, [hasChildren, props.comment.id])
+  })
+
+  const [deleteComment, { error: deleteError }] = useMutation(DELETE_COMMENT, {
+    variables: {
+      ID: commentID
+    },
+    refetchQueries: [
+      "getPost",
+      "getComment"
+    ]
+  })
+
+  const [createComment, { error: createError }] = useMutation(CREATE_COMMENT, {
+    refetchQueries: [
+      "getPost",
+      "getComment"
+    ]
+    // optimistic response?
+  })
+
+  //DELETE LATER, JUST GETTING RID OF ERRORS
+  if (deleteError || createError) console.log('meme');
 
   // check if user is admin or original author
   useEffect(() => {
-    let username = localStorage.getItem("curr_user")
-    let author = props.comment.author
-
-    if (username === null) {return}
-
-    if (props.comment.votes === 0.5) {return}
-
-    if (username === author) {
+    let user = userData?.currentUserDetails?.id
+    let author = data?.comment.author.id
+    if (user === undefined || author === undefined) return
+    if (user === author) {
       setCanDelete(true)
     }
+  }, [userData, data, loading, userLoading])
 
-    if (username.includes("admin")) {
-      setCanDelete(true)
-    }
-
-  }, [props.comment.votes, props.comment.author])
+  useEffect(() => {
+    if (data?.comment) setCommentContent(
+      data?.comment?.content.split("\n").join(" ").split(" ").map((s: string) => {
+        return urlify(s)
+      })
+    )
+  }, [data])
 
   const commentForm = (
     <div className={(showForm ? "h-max max-h-32 " : "max-h-0 ") + "ml-2 overflow-hidden transition-all duration-500"}>
@@ -75,9 +83,7 @@ function Comment (props: CommentProps) {
 
   function handleChange(e: React.FormEvent) {
     const target = e.target as HTMLInputElement
-    if (target) {
-      setFormContent(target.value)
-    }
+    if (target) setFormContent(target.value)
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -87,20 +93,19 @@ function Comment (props: CommentProps) {
       return
     }
 
-    let comment: CommentInterface = {
+    let comment = {
       content: formContent,
-      comments: [],
-      author: localStorage.getItem("curr_user") as string,
-      votes: 0,
-      id: ''
     }
-
-    let newCommentID: string = ''
-    await replyToComment(comment, props.comment.id).then(id => {newCommentID = id})
-    comment["id"] = newCommentID
-    let children = childComments as CommentInterface[]
-    children.push(comment)
-    setChildComments(children as never[])
+    console.log('creating comment');
+    
+    createComment({
+      variables: {
+        commentInfo: comment,
+        parentID: commentID,
+        parentType: "comment"
+      }
+    })
+    
     setShowForm(false)
   }
 
@@ -108,42 +113,43 @@ function Comment (props: CommentProps) {
     setShowForm(!showForm)
   }
 
-  function compDeleteComment() {
-    if (window.confirm("Are you sure you would like to delete this comment?")) {
-      deleteComment(props.comment.id)
-      window.location.reload()
+  function handleDelete() {
+    if (window.confirm("Are you sure you want to delete this comment?")) {
+      console.log('deleting');
+      deleteComment()
     }
   }
-
-  function urlify(text: string) {
+  
+  function urlify(text: string): ReactElement {
     let urlRegex = /(https?:\/\/[^\s]+)/g
     if (urlRegex.test(text)) {
-      return (<a className="text-blue-500 hover:text-blue-700" href={text}>{text}</a>)
+      return (<a className="text-blue-500 hover:text-blue-700" target="_blank" rel="noreferrer" href={text}>{text}</a>)
     } else {
       return (<span>{text + " "}</span>)
     }
   }
 
-  let string = props.comment.content
-  let content = string.split("\n").join(" ").split(" ").map(string => {return urlify(string)})
-  console.log(content, urlify(string))
+  
+
+  if (loading) return (<LoadingIcon/>)
+  if (error) return (<p>There was an error loading these comments</p>)
 
   return (
     <div className="relative my-2 p-2 border rounded-lg bg-white hover:border-gray-600">
-      {canDelete ? <div onClick={compDeleteComment} className="absolute top-2 right-5 fill-current text-red-600 cursor-pointer"> 
+      {canDelete ? <div onClick={handleDelete} className="absolute top-2 right-5 fill-current text-red-600 cursor-pointer"> 
         <FontAwesomeIcon icon={faTrash} /> 
       </div> : ""}
       <div>
-        <Link to={"/users/" + props.comment.author}><p className="text-xs text-gray-600 cursor-pointer active:text-black hover:underline">{props.comment.author}</p></Link>
-        <p>{content}</p>
-        {props.comment.votes === 0.5 ? '' : <Votes type="comment" loggedIn={loggedIn} replyFunc={toggleForm} content={props.comment} />} 
+        <Link to={"/users/" + data.comment.author.id}><p className="text-xs text-gray-600 cursor-pointer active:text-black hover:underline">{data.comment.author.username}</p></Link>
+        <p>{commentContent}</p>
+        <Votes replyFunc={toggleForm} content={data.comment} />
         {commentForm}
       </div>
       
       <div className="ml-2 border-l-2 pl-2">
         
-        {childComments.length > 0 ? childComments.map((child: CommentInterface) => {
-          return <Comment key={child.id} comment={child} />
+        {data?.comment.comments.length > 0 ? data?.comment.comments.map((id: string) => {          
+          return <Comment key={id} commentID={id} />
         }) : ""}
       </div>
     </div>

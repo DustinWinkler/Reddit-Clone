@@ -10,9 +10,17 @@ const PostSchema = new Schema ({
   comments: [{type: Schema.Types.ObjectId, ref: 'Comment'}],
   subreddit: {type: Schema.Types.ObjectId, ref: 'Subreddit'},
   type: {type: String, enum: ['Link', 'Image', 'Video', 'Text']},
-  oldID: String,
-  oldCommentIDs: [String]
+  fileURL: String
 }, {timestamps: true})
+
+function populateInfo(next) {
+  this.populate('author')
+  this.populate('subreddit')
+  next()
+}
+
+PostSchema.pre('find', populateInfo)
+PostSchema.pre('findOne', populateInfo)
 
 const Post = mongoose.model('Post', PostSchema)
 export default Post

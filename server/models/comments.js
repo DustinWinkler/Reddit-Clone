@@ -11,5 +11,13 @@ const CommentSchema = new Schema ({
   oldCommentIDs: [String]
 }, {timestamps: true})
 
+function populateInfo(next) {
+  this.populate('author')
+  next()
+}
+
+CommentSchema.pre('find', populateInfo)
+CommentSchema.pre('findOne', populateInfo)
+
 const Comment = mongoose.model('Comment', CommentSchema)
 export default Comment

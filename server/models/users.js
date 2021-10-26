@@ -1,25 +1,16 @@
 import mongoose from "mongoose";
-import jsonwebtoken from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 
 const Schema = mongoose.Schema
 
 const UserSchema = new Schema ({
   username: {type: String, required: true, minLength: 3, unique: true},
-  password: {type: String, required: true, minLength: 3, unique: true},
+  password: {type: String, required: true, minLength: 3},
   upvotedIDs: [{type: Schema.Types.ObjectId, ref: 'Post'}],
   downvotedIDs: [{type: Schema.Types.ObjectId, ref: 'Post'}],
   oldUpIDs: [String],
   oldDownIDs: [String]
 })
-
-UserSchema.methods.generateAuthToken = function() {
-  return jsonwebtoken.sign({
-    _id: this._id,
-    username: this.username,
-    password: this.password
-  }, process.env.AUTH_SECRET)
-}
 
 UserSchema.methods.isValidPassword = async function(password) {
   const valid = await bcrypt.compare(password, this.password)

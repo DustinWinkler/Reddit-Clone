@@ -4,32 +4,50 @@ import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import mongoose from 'mongoose';
 import * as dotenv from 'dotenv'
-import { Strategy as jwtStrategy, ExtractJwt } from 'passport-jwt';
-import { Strategy as localStrategy } from 'passport-local'
 import User from './models/users.js';
-import bcrypt from 'bcrypt'
-import indexRouter from './routes/index.js';
-import passport from 'passport';
+import Post from "./models/posts.js";
+import Comment from "./models/comments.js";
+import Subreddit from "./models/subreddit.js";
 import { ApolloServer } from 'apollo-server-express';
-import Schemas from './gql/schemas.js';
-import resolvers from './gql/resolvers.js';
+import Schemas from './GraphQL/schemas.js';
+import resolvers from './GraphQL/resolvers.js';
+import jwt from 'express-jwt';
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 dotenv.config({ path: __dirname+'/.env'})
 
+const app = express();
+
+app.use(jwt({
+  secret: process.env.AUTH_SECRET,
+  algorithms: ['HS256'],
+  credentialsRequired: false
+}))
+
 const server = new ApolloServer({
   typeDefs: Schemas,
   resolvers,
   context: async ({ req }) => {
-    // do curr_user stuff and add mongo models
+    const currentUser = req.user
+    return {
+      User,
+      Post,
+      Comment,
+      Subreddit,
+      currentUser
+    }
   }
 })
 
 await server.start()
 
-const app = express();
-server.applyMiddleware({ app, path: '/graphql'})
+const corsConfig = {
+  credentials: true,
+  origin: '*'
+}
+
+server.applyMiddleware({ app, path: '/graphql', cors: corsConfig})
 
 const mongoDB = process.env.MONGO_URL
 mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true})
@@ -39,59 +57,6 @@ db.on('error', console.error.bind(console, 'MongoDB connection error: '))
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(join(__dirname, '../frontend/build')));
-
-// Passport Stategy
-passport.use('signup', new localStrategy({
-  usernameField: 'username',
-  passwordField: 'password'
-}, async (username, password, done) => {
-  try {
-    const hashedPassword = await bcrypt.hash(password, 10)
-    const user = await User.create({ username, password: hashedPassword, isAdmin: false });
-    
-    return done(null, user);
-  } catch (error) {
-    done(error);
-  }
-}));
-
-passport.use('login', new localStrategy({
-  usernameField: 'username',
-  passwordField: 'password'
-}, async (username, password, done) => {
-    try {
-      const user = await User.findOne({ username });
-      if (!user) {
-        return done(null, false, { message: 'User not found' });
-      }
-
-      const validate = await user.isValidPassword(password);
-      if (!validate) {
-        return done(null, false, { message: 'Wrong Password' });
-      }
-
-      return done(null, user, { message: 'Logged in Successfully' });
-    } catch (error) {
-      return done(error);
-    } 
-  })
-);
-
-passport.use('jwt', new jwtStrategy({
-  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: process.env.AUTH_SECRET
-}, async (payload, done) => {
-  const user = await User.findById(payload._id)
-  
-  if (bcrypt.compare(payload.password, user.password)) {
-    return done(null, user)
-  } else {
-    return done(null, false)
-  }
-}))
-
-app.use('/api', indexRouter);
-
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
