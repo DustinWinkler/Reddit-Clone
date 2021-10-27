@@ -29,7 +29,7 @@ const Posts:FC<PostsProps> = ({ subredditID: ID }) => {
 	)
 
   return (
-    <div className="relative z-0 mt-4 w-full px-4 sm:w-10/12 xl:w-3/5 mx-auto p-2 striped">
+    <div className="relative z-0 mt-4 px-4 w-11/12 sm:w-10/12 lg:w-3/5 mx-auto p-2 striped">
 			{ID ? rAllPostingDisclaimer : ''}
 
 			{ !!error && <p>Error: {error.message}</p>}

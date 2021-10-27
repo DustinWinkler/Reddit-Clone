@@ -31,11 +31,11 @@ function Subreddit() {
         <LoadingIcon /> :
         (
           <div>
-            <header className="text-3xl font-bold mx-auto w-max text-center my-2 bg-white rounded-lg px-12 py-1 bg-opacity-70 border border-gray-400">
+            <header className="text-3xl font-bold mx-auto w-11/12 sm:w-10/12 lg:w-3/5 text-center my-2 bg-white rounded-lg py-1 bg-opacity-70 border border-gray-400">
               r/{subredditData?.subreddit.title}
             </header>
 
-            <div className="p-1 md:w-3/5 mx-auto text-center">
+            <div className="p-1 w-11/12 sm:w-10/12 lg:w-3/5 mx-auto text-center">
               <p className="py-1 px-4 bg-white mx-auto border border-gray-400 rounded ">{subredditData?.subreddit.description}</p>
             </div>
           </div>
@@ -48,7 +48,7 @@ function Subreddit() {
 
       <PostForm subreddit={subreddit} />
 
-    <div className="transition-all duration-500 mx-auto w-full md:w-3/5 px-2">
+    <div className="transition-all duration-500 mx-auto w-11/12 sm:w-10/12 lg:w-3/5 px-2">
       {postsLoading && <LoadingIcon /> }
       
       {!!postsError && <div>There was an error loading these posts</div>}

@@ -141,22 +141,22 @@ const Header: FC<HeaderProps> = ({ signInFunc, signOutFunc}) => {
 
   return (
     <div className="relative w-full border-b border-black text-center bg-white z-50">
-      <div className="py-1 w-full lg:w-11/12 xl:w-4/5 mx-auto text-center flex flex-col md:flex-row justify-around">
-      <div className="w-full mt-1">
-        <NavLink to="/subreddits" activeClassName="text-blue-600" className="hover:text-blue-600">Subreddits</NavLink>
-      </div>  
+      <div className="py-1 w-full lg:w-4/5 xl:w-3/5 mx-auto text-center flex md:flex-row flex-col content-end justify-between items-center">
+        <div className="w-full">
+          <NavLink to="/subreddits" activeClassName="text-blue-600" className="hover:text-blue-600 text-2xl justify-self-start">Subreddits</NavLink>
+        </div>  
         
       {/* Link to Home */}
-      <NavLink exact to="/" activeClassName="text-blue-600" className="order-first md:order-none text-2xl w-full cursor-pointer hover:text-blue-600">Reddit</NavLink>
+      <NavLink exact to="/" activeClassName="text-blue-600" className="order-first md:order-none text-4xl w-full cursor-pointer hover:text-blue-600">Reddit</NavLink>
 
       {loggedIn ? 
-      <div className="flex justify-around w-full opacity-100">
-        <span className="my-auto">Signed in as {currentUserUsername}</span>
-        <button onClick={()=>{signOutFunc()}} className="w-1/3 hover:text-blue-600">Sign Out</button>
+      <div className="flex md:flex-wrap flex-row items-center justify-between w-full sm:w-full m-auto opacity-100">
+        <span className="my-auto w-5/12 md:w-full ">Signed in as {currentUserUsername}</span>
+        <button onClick={()=>{signOutFunc()}} className="hover:text-blue-600 w-5/12 md:w-full">Sign Out</button>
       </div> :
-      <div className="flex w-full justify-around opacity-100">
-        <button onClick={()=>{setSigningIn(true)}} className="hover:text-blue-600">Sign In</button>
-        <button onClick={()=>{setSigningUp(true)}} className="hover:text-blue-600">Sign Up</button>
+      <div className="flex flex-wrap flex-col sm:flex-row w-full justify-around opacity-100 m-auto">
+        <button onClick={()=>{setSigningIn(true)}} className="hover:text-blue-600 md:w-full sm:w-5/12">Sign In</button>
+        <button onClick={()=>{setSigningUp(true)}} className="hover:text-blue-600 md:w-full sm:w-5/12">Sign Up</button>
       </div>
       }
 
