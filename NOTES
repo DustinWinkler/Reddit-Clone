@@ -1,0 +1,7 @@
+DONT FORGET TO UPLOAD IMAGES TO CLOUDINARY | DECIDE WHAT IS BEST FRONT OR BACK, LIKELY FRONT END
+
+POSTS ARE PRE FETCHING COMMENTS BUT THEY PROBABLY SHOULDNT, BECAUSE PURITY OF COMPONENTS
+
+upvoting posts should just send postid and user token, (updateComment can handle this or might want new endpoint to handle votes) server will handle all logic from there ie. if its upvoted already remove that id from user, decrement votes on comment and resend them a token without that comment id in their upvotedIDs array
+
+implement apollo client stuff

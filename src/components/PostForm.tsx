@@ -1,12 +1,13 @@
-import React, {useState, useEffect, useContext, useMemo, ReactElement} from 'react'
+import React, {useState, useEffect, useMemo, ReactElement} from 'react'
 import ToggleFormButton from './ToggleFormButton'
-import { LoggedInContext } from '../App'
-import {addPost, uploadFile} from "../API/posts"
-import { PostInterface } from '../API/interfaces'
+import { createPostInterface, PostType } from '../TS/interfaces'
+import { useMutation, useQuery } from '@apollo/client'
+import { CURRENT_USER_DETAILS } from '../GraphQL/queries'
+import { CREATE_POST } from '../GraphQL/mutations'
+import LoadingIcon from './LoadingIcon'
 
 type PostFormProps = {
   subreddit: string
-  addPostToStateFunc: Function
 }
 
 function PostForm(props: PostFormProps) {
@@ -17,7 +18,19 @@ function PostForm(props: PostFormProps) {
   const [formContent, setFormContent] = useState<string>('')
   const [formFile, setFormFile] = useState<File>()
 
-  const loggedIn = useContext(LoggedInContext)
+  const { data: userData } = useQuery(CURRENT_USER_DETAILS)
+
+  const [createPost, {
+    loading: createPostLoading,
+    error: createPostError,
+  }] = useMutation(CREATE_POST, {
+    onCompleted: ()=>{
+      setShowForm(false)
+    },
+    refetchQueries: [
+      "getPostsForSubreddit"
+    ]
+  })
 
   const textInput = useMemo<ReactElement>(() => {
     return (<label className="">
@@ -101,7 +114,7 @@ function PostForm(props: PostFormProps) {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
 
-    if (!loggedIn) {
+    if (!userData) {
       alert("You must be logged in to create posts.")
       return
     }
@@ -113,40 +126,49 @@ function PostForm(props: PostFormProps) {
       }
     } else {
       if (formContent === "" || formTitle === "") {
-        alert("Make sure you have add some content and added a title")
+        alert("Make sure you have added some content and added a title")
         return
       }
     }
 
-    let post: PostInterface = {
-      author: localStorage.getItem("curr_user") as string,
-      comments: [],
-      content: '',
+    let post: createPostInterface = {
+      content: formContent,
       subreddit: props.subreddit,
       title: formTitle,
-      votes: 0,
-      type: formType,
-      id: ''
+      type: formType as PostType,
     }
 
-    if (formType === "Image" || formType === "Video") {
-      if(formFile) {
-        post.content = formFile.name
-      }
+    if ((formType === "Image" || formType === "Video") && formFile) {
+      // upload post then attach fileURL
+      const formData = new FormData()
+      formData.append("file", formFile)
+      formData.append("upload_preset", "Reddit-Clone")
+      formData.append("cloud_name", "dvrdw4aac")
+      fetch("https://api.cloudinary.com/v1_1/dvrdw4aac/image/upload", {
+        method: "post",
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+        post.fileURL = data.url
+        console.log('cloudinary return data', data);
+        
+        createPost({
+          variables: {
+            postInfo: post
+          }
+        })
+      })
     } else {
-      post.content = formContent
+      console.log('non-file post created');
+      
+      createPost({
+        variables: {
+          postInfo: post
+        }
+      })
     }
-
-    addPost(post).then(id => {
-      post["id"] = id
-      props.addPostToStateFunc(post)
-      setShowForm(false)
-
-      if ((formType === "Image" || formType === "Video") && formFile) {
-        uploadFile(formFile)
-        // window.location.reload
-      }
-    })   
+  
   }
 
   const buttonStyles="border border-blue-400 py-1 px-3 bg-white rounded-lg w-full mx-1 hover:bg-blue-400 hover:border-gray-500 hover:text-white"
@@ -166,15 +188,18 @@ function PostForm(props: PostFormProps) {
         <button className={buttonStyles} onClick={()=>{switchType("Link")}}>Link</button>
       </div>
 
-        <form className="flex flex-col flex-wrap">
-          <label className="">
-            <input className="border my-1 w-full rounded-lg p-2" value={formTitle} onChange={handleTitleChange} placeholder="Title" />
-          </label>
-          
-          {formInput}
+        {createPostLoading ? <LoadingIcon /> :
+          <form className="flex flex-col flex-wrap">
+            <label className="">
+              <input className="border my-1 w-full rounded-lg p-2" value={formTitle} onChange={handleTitleChange} placeholder="Title" />
+            </label>
+            
+            {formInput}
 
-          <button className="w-3/5 mx-auto p-1 border-2 border-blue-500 rounded-xl hover:bg-blue-500 hover:text-white hover:border-gray-600 cursor-pointer text-center bg-gray-200" onClick={handleSubmit} >Submit</button>
-        </form>
+            <button className="w-3/5 mx-auto p-1 border-2 border-blue-500 rounded-xl hover:bg-blue-500 hover:text-white hover:border-gray-600 cursor-pointer text-center bg-gray-200" onClick={handleSubmit} >Submit</button>
+          </form>
+        }
+        {createPostError && <p>There was an error creating your post</p>}
       </div>
     </div>
   )

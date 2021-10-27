@@ -1,26 +1,48 @@
-import React, {useState, useEffect, useContext } from 'react'
+import React, {useState, useContext } from 'react'
 import { Link } from 'react-router-dom'
-import{ addSubreddit, getAllSubreddits, subExists } from "../API/subreddits"
 import LoadingIcon from './LoadingIcon'
 import ToggleFormButton from './ToggleFormButton'
 import {LoggedInContext} from "../App"
-import { SubredditInterface } from '../API/interfaces'
+import { useMutation, useQuery } from '@apollo/client'
+import { SUBREDDITS } from '../GraphQL/queries'
+import { CREATE_SUBREDDIT } from '../GraphQL/mutations'
+
+interface Subreddit {
+  title: string,
+  description: string,
+  id: string
+}
+
+interface SubredditData {
+  subreddits: Subreddit[]
+}
 
 function Subreddits() {
-  const [subList, setSubList] = useState<SubredditInterface[]>([])
-  const [loadingSubs, setLoadingSubs] = useState(true)
   const [showForm, setShowForm] = useState(false)
-  const [formTitle, setFormTitle] = useState('')
-  const [formDescription, setFormDescription] = useState('')
+  const [title, setTitle] = useState('')
+  const [description, setDescription] = useState('')
   
   const loggedIn = useContext(LoggedInContext)
 
-  useEffect(() => {
-    getAllSubreddits().then(list => {
-      setSubList(list)
-      setLoadingSubs(false)
-    })
-  }, [])
+  const [addSubreddit, {error: subredditError}] = useMutation(CREATE_SUBREDDIT, {
+    variables: {
+      subredditInfo: {
+        title,
+        description
+      }
+    },
+    onCompleted: () => {
+      setShowForm(false)
+    },
+    refetchQueries: [
+      "getSubreddits"
+    ]
+  })
+
+  const { loading, error, data } = useQuery<SubredditData>(SUBREDDITS)
+  if (error) return (<div>Error: {error.message}</div>)
+
+  
 
   function toggleForm() {
     setShowForm(!showForm)
@@ -28,54 +50,32 @@ function Subreddits() {
 
   function handleTitleChange(e: React.FormEvent) {
     const target = e.target as HTMLInputElement
-    setFormTitle(target.value)
+    setTitle(target.value)
   }
 
   function handleDescriptionChange(e: React.FormEvent) {
     const target = e.target as HTMLInputElement
-    setFormDescription(target.value)
+    setDescription(target.value)
   }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
 
-    subExists(formTitle).then(bool => {
-      if (!loggedIn) {
-        alert("You must be logged in to create a subreddit.")
-        return
-      }
-
-      if (bool) {
-        alert("That subreddit already exists")
-        setShowForm(false)
-        return
-      }
-
-      addSubreddit(formTitle, formDescription)
-
-      let newSub = {
-        description: formDescription,
-        id: formTitle
-      }
-  
-      let oldSubs = subList
-      oldSubs.push(newSub)
-      setSubList(oldSubs)
-  
-      setShowForm(false)
-      setFormTitle('')
-      setFormDescription('')
-    })
+    if (!loggedIn) {
+      alert("You must be logged in to create a subreddit.")
+      return
+    }
+    addSubreddit()
   }
 
   const subredditForm = (
     <div className={(showForm ? "opacity-100 visible " : "opacity-0 invisible ") + "transition-opacity duration-500 w-96 -ml-48 inset-x-1/2 text-center absolute"}>
       <form className="flex flex-col flex-wrap" onSubmit={handleSubmit}>
         <label className="">
-          <input className="border my-1 w-full rounded-lg p-2" onChange={handleTitleChange} value={formTitle} placeholder="Title" />
+          <input className="border my-1 w-full rounded-lg p-2" onChange={handleTitleChange} value={title} placeholder="Title" />
         </label>
         <label className="">
-          <textarea className="border my-1 w-full rounded-lg p-2" onChange={handleDescriptionChange} value={formDescription} placeholder="Description" rows={5} />
+          <textarea className="border my-1 w-full rounded-lg p-2" onChange={handleDescriptionChange} value={description} placeholder="Description" rows={5} />
         </label>
         <input className="w-3/5 mx-auto p-1 border-2 border-blue-500 rounded-xl hover:bg-blue-500 hover:text-white hover:border-gray-600 cursor-pointer" type="submit" value="Submit" />
       </form>
@@ -89,20 +89,21 @@ function Subreddits() {
 
       {subredditForm}
 
-      <div className={(showForm ? "mt-64 " : "") + "transition-all duration-500 w-full md:w-3/5 p-2 mx-auto"}>
-      { loadingSubs ? <LoadingIcon /> :
-      subList.map(sub => {
+      {subredditError && <p>Error: {subredditError.message}</p> }
+
+      <div className={(showForm ? "mt-64 " : "") + "transition-all duration-500 w-11/12 md:w-3/5 p-2 mx-auto"}>
+      { loading ? <LoadingIcon /> :
+      data?.subreddits.map((sub, i) => {
         return (
-        <div>
+        <div key={i}>
           <Link to={'/' + sub.id}>
             <div className="my-4 p-2 bg-white shadow-lg rounded border border-gray-400 hover:bg-gray-200">
-              <header className="text-center text-2xl m-1 font-bold">r/{sub.id}</header>
+              <header className="text-center text-2xl m-1 font-bold">r/{sub.title}</header>
               <p>{sub.description}</p>
             </div>
           </Link>
         </div>
         )
-        // getSubInfo(sub) -> then put other info in here
       })}
       </div>
 

@@ -1,55 +1,59 @@
-import React, { useEffect, useState } from 'react'
-import { useParams, useHistory } from "react-router-dom"
-import { getPosts} from '../API/posts'
-import Post from './Post'
-import { getSubredditInfo } from '../API/subreddits'
+import React from 'react'
+import { useParams } from "react-router-dom"
 import LoadingIcon from './LoadingIcon'
 import PostForm from './PostForm'
-import { PostInterface } from '../API/interfaces'
+import { useQuery } from '@apollo/client'
+import { SUBREDDIT, POSTS_FOR_SUBREDDIT } from '../GraphQL/queries'
+import { PostInterface } from '../TS/interfaces'
+import PostCard from './PostCard'
 
 function Subreddit() {
-  const [subInfo, setSubInfo] = useState('')
-  const [posts, setPosts] = useState<PostInterface[]>()
-  const [loadingPosts, setLoadingPosts] = useState<boolean>(true)
-
   const subreddit = useParams<{subreddit: string}>().subreddit
-  const history = useHistory()
 
-  useEffect(() => {
-    getPosts(subreddit).then(posts => {
-      setPosts(posts)
-      setLoadingPosts(false)
-    })
+  const { loading: subredditLoading, error: subredditError, data: subredditData } = useQuery(SUBREDDIT, {variables: {ID: subreddit}})
 
-    getSubredditInfo(subreddit).then(info => {
-      setSubInfo(info.toString())
-    })
-  }, [subreddit])
-
-  function addPostToState(post: PostInterface) {
-    let oldPosts = posts!
-    oldPosts.push(post)
-    setPosts(oldPosts)
-    setLoadingPosts(true)
-    setTimeout(()=>{setLoadingPosts(false)}, 100)
-    history.push("/"+subreddit)
-  }
+  const { 
+    loading: postsLoading,
+    error: postsError,
+    data: postsData
+  } = useQuery(POSTS_FOR_SUBREDDIT, {
+    variables: {
+      ID: subreddit
+    },
+    onCompleted: () => {console.log('meme');
+    }
+  })  
 
   return (
+    
     <div>
-      <header className="text-3xl font-bold mx-auto w-max text-center my-2 bg-white rounded-lg px-12 py-1 bg-opacity-70 border border-gray-400">
-        r/{subreddit}
-      </header>
+      {subredditLoading && !subredditError ?
+        <LoadingIcon /> :
+        (
+          <div>
+            <header className="text-3xl font-bold mx-auto w-11/12 sm:w-10/12 lg:w-3/5 text-center my-2 bg-white rounded-lg py-1 bg-opacity-70 border border-gray-400">
+              r/{subredditData?.subreddit.title}
+            </header>
 
-      <div className="p-1 md:w-3/5 mx-auto text-center">
-        <p className="py-1 px-4 bg-white mx-auto border border-gray-400 rounded ">{subInfo}</p>
-      </div>
+            <div className="p-1 w-11/12 sm:w-10/12 lg:w-3/5 mx-auto text-center">
+              <p className="py-1 px-4 bg-white mx-auto border border-gray-400 rounded ">{subredditData?.subreddit.description}</p>
+            </div>
+          </div>
+        )
+      }
 
+      {subredditError && (
+        <div>There was an error loading the subreddit info</div>
+      )}
 
-      <PostForm subreddit={subreddit} addPostToStateFunc={addPostToState} />
+      <PostForm subreddit={subreddit} />
 
-    <div className="transition-all duration-500 mx-auto w-full md:w-3/5 px-2">
-      {loadingPosts ? <LoadingIcon/> : posts!.map(post => {return <Post comments="enabled" key={post.id} post={post} />})}
+    <div className="transition-all duration-500 mx-auto w-11/12 sm:w-10/12 lg:w-3/5 px-2">
+      {postsLoading && <LoadingIcon /> }
+      
+      {!!postsError && <div>There was an error loading these posts</div>}
+
+      {postsData?.postsForSubreddit.map((post: PostInterface) => {return <PostCard commentsEnabled={true} key={post.id} post={post} />})}
     </div>
 
     </div>
